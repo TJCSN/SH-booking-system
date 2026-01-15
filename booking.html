@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -481,6 +482,205 @@
             color: #1976D2;
         }
  
+        /* Landscape Mobile Optimizations */
+        @media (max-width: 767px) and (orientation: landscape) {
+            body {
+                padding: 5px;
+                font-size: 14px;
+            }
+ 
+            .container {
+                padding: 5px;
+            }
+ 
+            .year-badge {
+                margin-bottom: 10px;
+            }
+ 
+            .year-badge span {
+                padding: 8px 20px;
+                font-size: 18px;
+                letter-spacing: 5px;
+            }
+ 
+            .help-text {
+                padding: 8px;
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+ 
+            .controls {
+                margin-bottom: 10px;
+            }
+ 
+            .controls h2 {
+                font-size: 16px;
+            }
+ 
+            .controls button {
+                padding: 8px 12px;
+                font-size: 14px;
+                min-width: 70px;
+            }
+ 
+            .equipment-selector {
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+ 
+            .equipment-selector label {
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+ 
+            .equipment-selector select {
+                padding: 8px;
+                font-size: 14px;
+            }
+ 
+            .legend {
+                padding: 10px;
+                margin: 10px 0;
+            }
+ 
+            .legend h3 {
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+ 
+            .legend-items {
+                gap: 8px;
+            }
+ 
+            .legend-item {
+                font-size: 11px;
+                gap: 8px;
+            }
+ 
+            .legend-badge {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+ 
+            .calendar thead th {
+                padding: 6px 2px;
+                font-size: 10px;
+                letter-spacing: 0;
+            }
+ 
+            .calendar tbody td {
+                min-height: 60px;
+                height: 60px;
+                padding: 3px;
+            }
+ 
+            .day-number {
+                font-size: 12px;
+                padding: 1px 4px;
+                top: 2px;
+                right: 2px;
+            }
+ 
+            .booking-count {
+                width: 20px;
+                height: 20px;
+                font-size: 11px;
+                top: 2px;
+                left: 2px;
+            }
+ 
+            .booking-overview {
+                bottom: 15px;
+                left: 2px;
+                right: 2px;
+                font-size: 7px;
+            }
+ 
+            .equipment-badge {
+                padding: 2px 3px;
+                font-size: 7px;
+                margin: 0.5px;
+            }
+ 
+            .availability-bar {
+                height: 5px;
+                bottom: 2px;
+                left: 2px;
+                right: 2px;
+            }
+ 
+            .tap-hint {
+                bottom: 18px;
+                padding: 3px 6px;
+                font-size: 8px;
+            }
+ 
+            .modal-content {
+                margin: 10px auto;
+                padding: 15px;
+                width: 98%;
+            }
+ 
+            .modal-header h2 {
+                font-size: 18px;
+            }
+ 
+            .close {
+                font-size: 30px;
+                width: 40px;
+                height: 40px;
+            }
+ 
+            .modal-date {
+                font-size: 14px;
+                margin-bottom: 12px;
+            }
+ 
+            .form-group {
+                margin-bottom: 12px;
+            }
+ 
+            .form-group label {
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+ 
+            .form-group input,
+            .form-group select {
+                padding: 10px;
+                font-size: 14px;
+                border-width: 2px;
+            }
+ 
+            .time-slots {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+ 
+            .time-slot {
+                padding: 10px;
+                font-size: 13px;
+                border-width: 2px;
+            }
+ 
+            .time-slot.booked::after {
+                font-size: 10px;
+                margin-top: 3px;
+            }
+ 
+            .form-actions {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-top: 12px;
+            }
+ 
+            .btn {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+ 
         @media (min-width: 768px) {
             .calendar thead th {
                 font-size: 16px;
@@ -637,7 +837,7 @@
  
     <script>
         // Global variables
-        let currentMonth = 0; // January
+        let currentMonth = 0;
         let currentYear = 2026;
         let selectedEquipment = '';
         let members = [];
@@ -649,7 +849,7 @@
                 equipmentId: 'OC1.1',
                 equipmentName: 'OC1.1',
                 memberName: 'Alice Johnson',
-                date: new Date(2026, 0, 9), // January 9, 2026
+                date: new Date(2026, 0, 9),
                 timeSlot: '09:00-10:00'
             },
             {
@@ -688,7 +888,6 @@
             'K2': 'eq-k'
         };
  
-        // Initialize on page load
         window.addEventListener('DOMContentLoaded', function() {
             console.log('Page loaded - initializing calendar...');
             loadMembersFromStorage();
@@ -785,9 +984,7 @@
             const lastDay = new Date(currentYear, currentMonth + 1, 0);
             const daysInMonth = lastDay.getDate();
            
-            // Get the day of week (0 = Sunday, 1 = Monday, etc.)
             const startingDayOfWeek = firstDay.getDay();
-            // Adjust so Monday = 0, Sunday = 6
             const adjustedStart = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
            
             console.log('First day of month:', firstDay);
@@ -811,19 +1008,16 @@
                     const cellIndex = i * 7 + j;
                    
                     if (cellIndex < adjustedStart || day > daysInMonth) {
-                        // Empty cell
                         cell.classList.add('empty');
                         cell.setAttribute('aria-hidden', 'true');
                         cell.innerHTML = '&nbsp;';
                     } else {
-                        // Date cell
                         const currentDate = new Date(currentYear, currentMonth, day);
                         cell.innerHTML = createDayCell(day, currentDate);
                         cell.setAttribute('role', 'button');
                         cell.setAttribute('tabindex', '0');
                         cell.setAttribute('aria-label', `${monthNames[currentMonth]} ${day}, ${currentYear}. Tap to book.`);
                        
-                        // Add click event
                         (function(date) {
                             cell.addEventListener('click', () => openBookingModal(date));
                             cell.addEventListener('keypress', (e) => {
