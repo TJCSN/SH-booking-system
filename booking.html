@@ -244,21 +244,6 @@
             background-color: #F44336;
         }
  
-        .tap-hint {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #7B68EE;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: bold;
-            white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
- 
         .modal {
             display: none;
             position: fixed;
@@ -608,12 +593,6 @@
                 bottom: 2px;
                 left: 2px;
                 right: 2px;
-            }
- 
-            .tap-hint {
-                bottom: 18px;
-                padding: 3px 6px;
-                font-size: 8px;
             }
  
             .modal-content {
@@ -1048,13 +1027,7 @@
            
             if (bookingCount > 0) {
                 html += `<div class="booking-count">${bookingCount}</div>`;
-            }
-           
-            if (dayNumber <= 3 && bookingCount === 0) {
-                html += `<div class="tap-hint">TAP HERE</div>`;
-            }
-           
-            if (bookingCount > 0) {
+               
                 html += '<div class="booking-overview">';
                
                 const uniqueEquipment = [...new Set(dayBookings.map(b => b.equipmentId))];
@@ -1188,7 +1161,9 @@
             const equipmentId = document.getElementById('equipmentChoice').value;
             const selectedSlot = document.querySelector('.time-slot.selected');
            
-            if (!memberName) {
+            if (!memberName)
+ 
+           {
                 alert('⚠️ Please select your name from the member list');
                 return;
             }
