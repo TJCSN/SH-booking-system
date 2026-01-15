@@ -1,0 +1,148 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Booking System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+ 
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+ 
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 32px;
+        }
+ 
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+ 
+        .menu {
+            display: grid;
+            gap: 20px;
+        }
+ 
+        .menu-item {
+            display: block;
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+ 
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+ 
+        .menu-item:active {
+            transform: translateY(-2px);
+        }
+ 
+        .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+        }
+ 
+        .admin-item {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+ 
+        .admin-item:hover {
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+        }
+ 
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+ 
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+ 
+            h1 {
+                font-size: 26px;
+            }
+ 
+            .menu-item {
+                padding: 20px;
+                font-size: 18px;
+            }
+ 
+            .icon {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚣 Equipment Booking System</h1>
+        <p class="subtitle">Welcome! Choose an option below</p>
+ 
+        <div class="menu">
+            <a href="booking.html" class="menu-item">
+                <span class="icon">📅</span>
+                Book Equipment
+                <div style="font-size: 14px; margin-top: 10px; opacity: 0.9;">
+                    View calendar and make bookings
+                </div>
+            </a>
+ 
+            <a href="admin.html" class="menu-item admin-item">
+                <span class="icon">👥</span>
+                Admin Panel
+                <div style="font-size: 14px; margin-top: 10px; opacity: 0.9;">
+                    Manage members (upload Excel)
+                </div>
+            </a>
+        </div>
+ 
+        <div class="footer">
+            <p>Equipment Booking System v1.0</p>
+            <p style="margin-top: 5px;">Built with ❤️ for easy equipment management</p>
+        </div>
+    </div>
+</body>
+</html>
+ 
