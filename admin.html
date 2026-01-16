@@ -198,9 +198,15 @@ background: #c82333;
 transform: scale(1.05);
 }
  
+.nav-links {
+display: flex;
+gap: 15px;
+margin-bottom: 20px;
+flex-wrap: wrap;
+}
+ 
 .nav-back {
 display: inline-block;
-margin-bottom: 20px;
 padding: 12px 24px;
 background: #6c757d;
 color: white;
@@ -213,6 +219,23 @@ transition: all 0.3s;
 .nav-back:hover {
 background: #5a6268;
 transform: translateX(-5px);
+}
+ 
+.nav-bookings {
+display: inline-block;
+padding: 12px 24px;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: white;
+text-decoration: none;
+border-radius: 8px;
+font-weight: bold;
+transition: all 0.3s;
+box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+ 
+.nav-bookings:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
 }
  
 .stats-grid {
@@ -520,6 +543,31 @@ background: #138496;
 transform: translateY(-2px);
 }
  
+/* Real-time sync indicator */
+.sync-indicator {
+position: fixed;
+bottom: 20px;
+right: 20px;
+background: #28a745;
+color: white;
+padding: 12px 20px;
+border-radius: 25px;
+font-size: 14px;
+font-weight: bold;
+box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+display: none;
+animation: fadeInOut 2s;
+}
+ 
+@keyframes fadeInOut {
+0%, 100% { opacity: 0; }
+10%, 90% { opacity: 1; }
+}
+ 
+.sync-indicator.show {
+display: block;
+}
+ 
 @media (max-width: 768px) {
 .login-container {
 margin: 50px auto;
@@ -559,6 +607,14 @@ flex-direction: column;
 .btn {
 width: 100%;
 }
+ 
+.nav-links {
+flex-direction: column;
+}
+ 
+.nav-back, .nav-bookings {
+text-align: center;
+}
 }
 </style>
 </head>
@@ -586,20 +642,23 @@ width: 100%;
 </form>
  
 <div class="back-link">
-<a href="index.html">← Back to Home</a>
+<a href="booking.html">← Back to Booking Calendar</a>
 </div>
 </div>
  
 <!-- Admin Panel Content -->
 <div class="admin-content" id="adminContent">
 <div class="container">
-<a href="index.html" class="nav-back">← Back to Home</a>
+<div class="nav-links">
+<a href="booking.html" class="nav-back">← Back to Booking Calendar</a>
+<a href="admin_bookings.html" class="nav-bookings">📋 View All Bookings</a>
+</div>
  
 <div class="header">
 <button class="logout-btn" onclick="logout()">🚪 Logout</button>
 <div class="header-icon">👥</div>
-<h1>Admin Panel</h1>
-<p class="subtitle">Manage members and system settings</p>
+<h1>Admin Panel - Member Management</h1>
+<p class="subtitle">Manage members and sync to all booking pages</p>
 </div>
  
 <div id="alertContainer"></div>
@@ -612,6 +671,10 @@ width: 100%;
 <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
 <div class="stat-number" id="lastUpdated">Never</div>
 <div class="stat-label">Last Updated</div>
+</div>
+<div class="stat-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+<div class="stat-number" id="activeUsers">0</div>
+<div class="stat-label">Active Booking Pages</div>
 </div>
 </div>
  
@@ -626,6 +689,7 @@ width: 100%;
 <li>Each subsequent row should contain one member name</li>
 <li>Click the upload area below or drag and drop your file</li>
 <li>Members will be automatically imported and saved</li>
+<li><strong>🔄 All open booking pages will update automatically!</strong></li>
 </ol>
 </div>
  
@@ -677,8 +741,13 @@ style="flex: 1; min-width: 200px; padding: 15px; border: 2px solid #ddd; border-
 </div>
 </div>
  
+<!-- Sync Indicator -->
+<div class="sync-indicator" id="syncIndicator">
+🔄 Synced to all booking pages!
+</div>
+ 
 <!-- Include SheetJS library for Excel processing -->
-<script src=https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
  
 <script>
 // ============================================
@@ -714,6 +783,7 @@ function showAdminPanel() {
     loadMembers();
     updateStats();
     displayMembers();
+    startActiveUserTracking();
 }
  
 // Handle login form submission
@@ -750,6 +820,55 @@ function logout() {
 }
  
 // ============================================
+// REAL-TIME SYNC SYSTEM
+// ============================================
+ 
+// Trigger sync notification to all booking pages
+function triggerSync() {
+    // Update sync timestamp
+    const syncTimestamp = new Date().getTime();
+    localStorage.setItem('memberListSyncTimestamp', syncTimestamp);
+   
+    // Show sync indicator
+    const syncIndicator = document.getElementById('syncIndicator');
+    syncIndicator.classList.add('show');
+    setTimeout(() => {
+        syncIndicator.classList.remove('show');
+    }, 2000);
+   
+    console.log('📡 Sync triggered to all booking pages at', new Date().toLocaleTimeString());
+}
+ 
+// Track active booking pages
+function startActiveUserTracking() {
+    updateActiveUserCount();
+    setInterval(updateActiveUserCount, 5000); // Update every 5 seconds
+}
+ 
+function updateActiveUserCount() {
+    const now = new Date().getTime();
+    const activeThreshold = 30000; // 30 seconds
+   
+    let activeCount = 0;
+   
+    // Check all heartbeat entries
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('bookingPageHeartbeat_')) {
+            const timestamp = parseInt(localStorage.getItem(key));
+            if (now - timestamp < activeThreshold) {
+                activeCount++;
+            } else {
+                // Remove stale heartbeat
+                localStorage.removeItem(key);
+            }
+        }
+    }
+   
+    document.getElementById('activeUsers').textContent = activeCount;
+}
+ 
+// ============================================
 // MEMBER MANAGEMENT CODE
 // ============================================
 let members = [];
@@ -772,6 +891,9 @@ function saveMembers() {
     localStorage.setItem('memberListUpdated', new Date().toISOString());
     updateStats();
     displayMembers();
+   
+    // ⭐ TRIGGER REAL-TIME SYNC
+    triggerSync();
 }
  
 function updateStats() {
@@ -914,7 +1036,7 @@ function handleFile(file) {
             });
            
             saveMembers();
-            showAlert(`✅ Successfully imported ${newMembers.length} members!`, 'success');
+            showAlert(`✅ Successfully imported ${newMembers.length} members! All booking pages updated.`, 'success');
            
         } catch (error) {
             console.error('Error processing file:', error);
@@ -947,14 +1069,14 @@ function addMemberManually() {
     members.push(memberName);
     saveMembers();
     input.value = '';
-    showAlert(`✅ Added ${memberName} successfully!`, 'success');
+    showAlert(`✅ Added ${memberName} successfully! All booking pages updated.`, 'success');
 }
  
 function deleteMember(memberName) {
     if (confirm(`Are you sure you want to delete "${memberName}"?`)) {
         members = members.filter(m => m !== memberName);
         saveMembers();
-        showAlert(`✅ Deleted ${memberName}`, 'success');
+        showAlert(`✅ Deleted ${memberName}. All booking pages updated.`, 'success');
     }
 }
  
@@ -967,7 +1089,7 @@ function clearAllMembers() {
     if (confirm(`⚠️ Are you sure you want to delete ALL ${members.length} members? This cannot be undone!`)) {
         members = [];
         saveMembers();
-        showAlert('✅ All members have been cleared', 'success');
+        showAlert('✅ All members have been cleared. All booking pages updated.', 'success');
     }
 }
  
@@ -1019,3 +1141,4 @@ document.getElementById('manualMemberName').addEventListener('keypress', functio
 </script>
 </body>
 </html>
+ 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,23 +25,6 @@
             margin: 0 auto;
             background-color: #f0f0f0;
             padding: 15px;
-        }
- 
-        .year-badge {
-            text-align: center;
-            margin-bottom: 25px;
-        }
- 
-        .year-badge span {
-            display: inline-block;
-            background-color: #FF6B4A;
-            color: white;
-            padding: 15px 40px;
-            border-radius: 30px;
-            font-size: 28px;
-            font-weight: bold;
-            letter-spacing: 10px;
-            box-shadow: 0 4px 10px rgba(255, 107, 74, 0.3);
         }
  
         .controls {
@@ -469,6 +453,48 @@
             color: #1976D2;
         }
  
+        /* Real-time sync notification */
+        .sync-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            z-index: 10000;
+            display: none;
+            animation: slideInRight 0.3s ease-out;
+        }
+ 
+        .sync-notification.show {
+            display: block;
+        }
+ 
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+ 
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+ 
         /* Mobile Portrait Optimizations */
         @media (max-width: 767px) and (orientation: portrait) {
             body {
@@ -478,16 +504,6 @@
  
             .container {
                 padding: 8px;
-            }
- 
-            .year-badge {
-                margin-bottom: 15px;
-            }
- 
-            .year-badge span {
-                padding: 10px 25px;
-                font-size: 20px;
-                letter-spacing: 6px;
             }
  
             .help-text {
@@ -605,6 +621,13 @@
                 left: 3px;
                 right: 3px;
             }
+ 
+            .sync-notification {
+                top: 10px;
+                right: 10px;
+                padding: 10px 15px;
+                font-size: 14px;
+            }
         }
  
         /* Landscape Mobile Optimizations */
@@ -616,16 +639,6 @@
  
             .container {
                 padding: 5px;
-            }
- 
-            .year-badge {
-                margin-bottom: 8px;
-            }
- 
-            .year-badge span {
-                padding: 6px 18px;
-                font-size: 16px;
-                letter-spacing: 4px;
             }
  
             .help-text {
@@ -806,6 +819,13 @@
                 padding: 12px;
                 font-size: 14px;
             }
+ 
+            .sync-notification {
+                top: 5px;
+                right: 5px;
+                padding: 8px 12px;
+                font-size: 12px;
+            }
         }
  
         @media (min-width: 768px) {
@@ -843,11 +863,12 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="year-badge">
-            <span>2026</span>
-        </div>
+    <!-- Sync Notification -->
+    <div class="sync-notification" id="syncNotification">
+        🔄 Member list updated!
+    </div>
  
+    <div class="container">
         <div class="help-text">
             🚣 <strong>How to use:</strong> Tap any date to see available time slots and make a booking. Green means available, red means busy. <strong>Only registered members can book equipment.</strong>
         </div>
@@ -963,6 +984,77 @@
     </div>
  
     <script>
+        // ============================================
+        // REAL-TIME SYNC SYSTEM
+        // ============================================
+       
+        // Generate unique page ID for heartbeat
+        const pageId = 'bookingPageHeartbeat_' + Math.random().toString(36).substr(2, 9);
+        let lastSyncTimestamp = localStorage.getItem('memberListSyncTimestamp') || '0';
+ 
+        // Send heartbeat to admin panel
+        function sendHeartbeat() {
+            localStorage.setItem(pageId, new Date().getTime());
+        }
+ 
+        // Start heartbeat
+        sendHeartbeat();
+        const heartbeatInterval = setInterval(sendHeartbeat, 10000); // Every 10 seconds
+ 
+        // Clean up heartbeat on page unload
+        window.addEventListener('beforeunload', function() {
+            localStorage.removeItem(pageId);
+            clearInterval(heartbeatInterval);
+        });
+ 
+        // Listen for member list changes from admin panel
+        window.addEventListener('storage', function(e) {
+            // Check if member list was updated
+            if (e.key === 'memberListSyncTimestamp') {
+                const newTimestamp = e.newValue;
+               
+                if (newTimestamp && newTimestamp !== lastSyncTimestamp) {
+                    lastSyncTimestamp = newTimestamp;
+                   
+                    console.log('🔄 Member list updated by admin! Reloading members...');
+                   
+                    // Reload member list
+                    loadMembersFromStorage();
+                    populateMemberDropdown();
+                   
+                    // Show notification to user
+                    showSyncNotification();
+                }
+            }
+           
+            // Also listen for direct memberList changes
+            if (e.key === 'memberList') {
+                console.log('🔄 Member list changed! Reloading...');
+                loadMembersFromStorage();
+                populateMemberDropdown();
+                showSyncNotification();
+            }
+        });
+ 
+        // Show sync notification
+        function showSyncNotification() {
+            const notification = document.getElementById('syncNotification');
+            notification.classList.add('show');
+           
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    notification.style.animation = '';
+                }, 300);
+            }, 3000);
+        }
+ 
+        // ============================================
+        // ORIGINAL BOOKING CALENDAR CODE
+        // ============================================
+       
         // Global variables
         let currentMonth = 0;
         let currentYear = 2026;
@@ -1015,31 +1107,34 @@
             'K2': 'eq-k'
         };
  
+        // Initialize on page load
         window.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded - initializing calendar...');
+            console.log('📅 Booking calendar loaded - initializing...');
             loadMembersFromStorage();
             populateMemberDropdown();
             setupEventListeners();
             renderCalendar();
-            console.log('Initialization complete');
+            console.log('✅ Initialization complete');
         });
  
+        // Load members from localStorage (synced with admin panel)
         function loadMembersFromStorage() {
             const storedMembers = localStorage.getItem('memberList');
             if (storedMembers) {
                 try {
                     members = JSON.parse(storedMembers);
-                    console.log('Loaded', members.length, 'members from storage');
+                    console.log('✅ Loaded', members.length, 'members from storage');
                 } catch (e) {
-                    console.error('Error loading members:', e);
+                    console.error('❌ Error loading members:', e);
                     members = ['Alice Johnson', 'Bob Smith', 'Charlie Brown'];
                 }
             } else {
-                console.log('No members in storage, using defaults');
+                console.log('⚠️ No members in storage, using defaults');
                 members = ['Alice Johnson', 'Bob Smith', 'Charlie Brown'];
             }
         }
  
+        // Populate member dropdown
         function populateMemberDropdown() {
             const memberSelect = document.getElementById('memberSelect');
             memberSelect.innerHTML = '<option value="">-- Choose your name --</option>';
@@ -1053,7 +1148,7 @@
                 memberSelect.appendChild(option);
             });
            
-            console.log('Populated member dropdown with', sortedMembers.length, 'members');
+            console.log('✅ Populated member dropdown with', sortedMembers.length, 'members');
         }
  
         function setupEventListeners() {
@@ -1096,11 +1191,11 @@
                 }
             });
            
-            console.log('Event listeners setup complete');
+            console.log('✅ Event listeners setup complete');
         }
  
         function renderCalendar() {
-            console.log('Rendering calendar for:', currentMonth + 1, '/', currentYear);
+            console.log('📅 Rendering calendar for:', currentMonth + 1, '/', currentYear);
            
             const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
                                'July', 'August', 'September', 'October', 'November', 'December'];
@@ -1114,18 +1209,13 @@
             const startingDayOfWeek = firstDay.getDay();
             const adjustedStart = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
            
-            console.log('First day of month:', firstDay);
-            console.log('Days in month:', daysInMonth);
-            console.log('Starting day (adjusted):', adjustedStart);
-           
             const calendarBody = document.getElementById('calendarBody');
             calendarBody.innerHTML = '';
            
+            // Initialize day counter
             let day = 1;
             const totalCells = daysInMonth + adjustedStart;
             const rows = Math.ceil(totalCells / 7);
-           
-            console.log('Creating', rows, 'rows');
            
             for (let i = 0; i < rows; i++) {
                 const row = document.createElement('tr');
@@ -1164,7 +1254,7 @@
                 calendarBody.appendChild(row);
             }
            
-            console.log('Calendar rendered with', day - 1, 'days');
+            console.log('✅ Calendar rendered with', day - 1, 'days');
         }
  
         function createDayCell(dayNumber, date) {
@@ -1221,7 +1311,8 @@
             const modalDate = document.getElementById('modalDate');
            
             modalDate.textContent = date.toLocaleDateString('en-US', {
-                weekday: 'long',                year: 'numeric',
+                weekday: 'long',
+                year: 'numeric',
                 month: 'long',
                 day: 'numeric'
             });
@@ -1346,4 +1437,5 @@
     </script>
 </body>
 </html>
+ 
  
