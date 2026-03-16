@@ -1,32 +1,28 @@
 
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Equipment Booking Calendar</title>
-    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background-color: #f0f0f0;
             padding: 10px;
             font-size: 18px;
         }
-
+ 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background-color: #f0f0f0;
             padding: 15px;
         }
-
+ 
         .controls {
             display: flex;
             justify-content: space-between;
@@ -34,14 +30,14 @@
             margin-bottom: 20px;
             gap: 10px;
         }
-
+ 
         .controls h2 {
             color: #333;
             font-size: 22px;
             text-align: center;
             flex: 1;
         }
-
+ 
         .controls button {
             padding: 15px 20px;
             background-color: #7B68EE;
@@ -55,20 +51,17 @@
             box-shadow: 0 3px 8px rgba(123, 104, 238, 0.3);
             transition: all 0.3s;
         }
-
-        .controls button:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 4px rgba(123, 104, 238, 0.3);
-        }
-
+ 
+        .controls button:active { transform: scale(0.95); }
+ 
         .equipment-selector {
             margin-bottom: 20px;
             background: white;
             padding: 15px;
             border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
+ 
         .equipment-selector label {
             display: block;
             font-weight: bold;
@@ -76,7 +69,7 @@
             color: #333;
             font-size: 20px;
         }
-
+ 
         .equipment-selector select {
             width: 100%;
             padding: 15px;
@@ -86,23 +79,23 @@
             cursor: pointer;
             background-color: white;
         }
-
+ 
         .calendar-wrapper {
             position: relative;
             background: white;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             overflow-x: auto;
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
         }
-
+ 
         .calendar {
             width: 100%;
             min-width: 700px;
             border-collapse: collapse;
         }
-
+ 
         .calendar thead th {
             background-color: #A8D5E2;
             color: #333;
@@ -111,9 +104,8 @@
             text-align: center;
             border: 2px solid #333;
             font-size: 14px;
-            letter-spacing: 0.5px;
         }
-
+ 
         .calendar tbody td {
             border: 2px solid #333;
             min-height: 120px;
@@ -126,20 +118,27 @@
             transition: background-color 0.2s;
             touch-action: manipulation;
         }
-
-        .calendar tbody td:active {
-            background-color: #e8f4f8;
-        }
-
+ 
+        .calendar tbody td:active { background-color: #e8f4f8; }
+ 
         .calendar tbody td.empty {
             background-color: #f5f5f5;
             cursor: default;
         }
-
-        .calendar tbody td.empty:active {
-            background-color: #f5f5f5;
+ 
+        .calendar tbody td.past-date {
+            background-color: #f9f9f9;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
-
+ 
+        /* BUG 5 FIX */
+        .calendar tbody td.past-date .booking-count,
+        .calendar tbody td.past-date .booking-overview,
+        .calendar tbody td.past-date .availability-bar {
+            display: none;
+        }
+ 
         .day-number {
             position: absolute;
             top: 5px;
@@ -151,7 +150,7 @@
             padding: 2px 6px;
             border-radius: 4px;
         }
-
+ 
         .booking-count {
             position: absolute;
             top: 5px;
@@ -166,9 +165,8 @@
             justify-content: center;
             font-size: 16px;
             font-weight: bold;
-            box-shadow: 0 2px 5px rgba(255, 107, 74, 0.4);
         }
-
+ 
         .booking-overview {
             position: absolute;
             bottom: 30px;
@@ -177,7 +175,7 @@
             font-size: 10px;
             line-height: 1.3;
         }
-
+ 
         .equipment-badge {
             display: inline-block;
             padding: 4px 6px;
@@ -186,22 +184,23 @@
             font-size: 10px;
             font-weight: bold;
         }
-
-        .eq-oc1 {
-            background-color: #E3F2FD;
-            color: #1976D2;
+ 
+        .eq-oc { background-color: #E3F2FD; color: #1976D2; }
+        .eq-t  { background-color: #FFF3E0; color: #F57C00; }
+        .eq-k  { background-color: #E8F5E9; color: #388E3C; }
+ 
+        .booking-type-badge {
+            display: inline-block;
+            padding: 2px 5px;
+            margin: 1px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: bold;
         }
-
-        .eq-t {
-            background-color: #FFF3E0;
-            color: #F57C00;
-        }
-
-        .eq-k {
-            background-color: #E8F5E9;
-            color: #388E3C;
-        }
-
+ 
+        .badge-member    { background-color: #BBDEFB; color: #1565C0; }
+        .badge-nonmember { background-color: #FFE0B2; color: #E65100; }
+ 
         .availability-bar {
             position: absolute;
             bottom: 5px;
@@ -212,37 +211,23 @@
             border-radius: 5px;
             overflow: hidden;
         }
-
-        .availability-fill {
-            height: 100%;
-            transition: width 0.3s;
-        }
-
-        .avail-low {
-            background-color: #4CAF50;
-        }
-
-        .avail-medium {
-            background-color: #FFC107;
-        }
-
-        .avail-high {
-            background-color: #F44336;
-        }
-
+ 
+        .availability-fill { height: 100%; transition: width 0.3s; }
+        .avail-low    { background-color: #4CAF50; }
+        .avail-medium { background-color: #FFC107; }
+        .avail-high   { background-color: #F44336; }
+ 
         .modal {
             display: none;
             position: fixed;
             z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-
+ 
         .modal-content {
             background-color: white;
             margin: 20px auto;
@@ -250,22 +235,18 @@
             border-radius: 15px;
             width: 95%;
             max-width: 600px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-
+ 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
-
-        .modal-header h2 {
-            color: #333;
-            margin: 0;
-            font-size: 24px;
-        }
-
+ 
+        .modal-header h2 { color: #333; margin: 0; font-size: 24px; }
+ 
         .close {
             font-size: 40px;
             font-weight: bold;
@@ -274,31 +255,25 @@
             border: none;
             background: none;
             padding: 0;
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
             transition: background-color 0.3s;
         }
-
-        .close:active {
-            background-color: #f0f0f0;
-        }
-
+ 
+        .close:active { background-color: #f0f0f0; }
+ 
         .modal-date {
             font-size: 20px;
             color: #7B68EE;
             margin-bottom: 20px;
             font-weight: bold;
-            line-height: 1.4;
         }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
+ 
+        .form-group { margin-bottom: 25px; }
+ 
         .form-group label {
             display: block;
             margin-bottom: 10px;
@@ -306,7 +281,7 @@
             color: #333;
             font-size: 20px;
         }
-
+ 
         .form-group input,
         .form-group select {
             width: 100%;
@@ -316,66 +291,294 @@
             font-size: 18px;
             background-color: white;
         }
-
+ 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
             border-color: #7B68EE;
-            box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.1);
         }
-
+ 
+        .required-star { color: #dc3545; margin-left: 4px; }
+ 
+        .ntu-contact-section {
+            display: none;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #FFF3E0;
+            border-radius: 12px;
+            border: 2px solid #FFCC80;
+        }
+ 
+        .ntu-contact-section h3 {
+            font-size: 18px;
+            color: #E65100;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+ 
+        .ntu-contact-section .form-group { margin-bottom: 15px; }
+        .ntu-contact-section .form-group:last-child { margin-bottom: 0; }
+ 
+        .ntu-contact-section label {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+ 
+        .ntu-contact-section input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #FFCC80;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+        }
+ 
+        .ntu-contact-section input:focus {
+            outline: none;
+            border-color: #E65100;
+        }
+ 
+        .ntu-contact-section input.input-error {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+ 
+        .field-error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+ 
+        .booker-type-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+ 
+        .booker-type-btn {
+            padding: 20px;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s;
+            touch-action: manipulation;
+        }
+ 
+        .booker-type-btn .type-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+        .booker-type-btn.selected-member    { border-color: #1565C0; background-color: #E3F2FD; color: #1565C0; }
+        .booker-type-btn.selected-nonmember { border-color: #E65100; background-color: #FFF3E0; color: #E65100; }
+ 
+        .password-section {
+            display: none;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #E3F2FD;
+            border-radius: 12px;
+            border: 2px solid #BBDEFB;
+        }
+ 
+        .password-section label {
+            display: block;
+            font-weight: bold;
+            color: #1565C0;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+ 
+        .password-input-row { display: flex; gap: 10px; }
+ 
+        .password-input-row input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #BBDEFB;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+ 
+        .password-input-row button {
+            padding: 15px 20px;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+ 
+        .member-section    { display: none; margin-bottom: 25px; }
+        .nonmember-section { display: none; margin-bottom: 25px; }
+ 
+        .upload-section {
+            margin-top: 15px;
+            padding: 20px;
+            background: #FFF8E1;
+            border-radius: 12px;
+            border: 2px dashed #FFB300;
+        }
+ 
+        .upload-section label {
+            display: block;
+            font-weight: bold;
+            color: #E65100;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+ 
+        .upload-section input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #FFB300;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+ 
+        .upload-preview { margin-top: 10px; display: none; }
+ 
+        .upload-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 2px solid #FFB300;
+            object-fit: contain;
+        }
+ 
+        .upload-status { margin-top: 8px; font-size: 14px; color: #E65100; font-weight: bold; }
+ 
+        .indemnity-section {
+            display: none;
+            margin-top: 20px;
+            border: 2px solid #dc3545;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+ 
+        .indemnity-header {
+            background: #dc3545;
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+ 
+        .indemnity-body { padding: 20px; background: #fff5f5; }
+ 
+        .indemnity-text {
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            background: white;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 15px;
+        }
+ 
+        .indemnity-text h4 { color: #dc3545; margin-bottom: 10px; font-size: 16px; text-align: center; }
+        .indemnity-text h5 { color: #333; margin: 15px 0 8px 0; font-size: 14px; }
+        .indemnity-text p  { margin-bottom: 10px; }
+        .indemnity-text ol { padding-left: 20px; margin-bottom: 10px; }
+        .indemnity-text ol li { margin-bottom: 8px; }
+        .indemnity-text hr { border: none; border-top: 1px solid #f5c6cb; margin: 12px 0; }
+ 
+        .indemnity-scroll-hint {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+ 
+        .indemnity-agree {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #f5c6cb;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+ 
+        .indemnity-agree:hover  { border-color: #dc3545; }
+        .indemnity-agree.checked { border-color: #28a745; background: #f0fff4; }
+ 
+        .indemnity-checkbox {
+            width: 28px; height: 28px;
+            min-width: 28px;
+            cursor: pointer;
+            accent-color: #28a745;
+            margin-top: 2px;
+        }
+ 
+        .indemnity-agree-text {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+            font-weight: bold;
+        }
+ 
         .time-slots {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
             margin-top: 15px;
         }
-
+ 
         .time-slot {
-            padding: 20px;
+            padding: 15px 10px;
             border: 3px solid #ddd;
             border-radius: 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             background-color: white;
             touch-action: manipulation;
         }
-
-        .time-slot:active:not(.booked) {
-            transform: scale(0.98);
-        }
-
+ 
+        .time-slot:active:not(.booked) { transform: scale(0.98); }
+ 
         .time-slot.selected {
             background-color: #7B68EE;
             color: white;
             border-color: #7B68EE;
-            box-shadow: 0 4px 12px rgba(123, 104, 238, 0.4);
+            box-shadow: 0 4px 12px rgba(123,104,238,0.4);
         }
-
+ 
         .time-slot.booked {
             background-color: #f8d7da;
             color: #721c24;
             cursor: not-allowed;
             opacity: 0.7;
+            font-size: 13px;
         }
-
-        .time-slot.booked::after {
-            content: ' ❌ TAKEN';
-            font-size: 14px;
-            display: block;
-            margin-top: 5px;
-        }
-
+ 
+        .time-slot.booked::after { content: ' ❌'; display: inline; }
+ 
         .form-actions {
             display: grid;
             grid-template-columns: 1fr;
             gap: 12px;
             margin-top: 25px;
         }
-
+ 
         .btn {
             padding: 20px;
             border: none;
@@ -386,43 +589,38 @@
             transition: all 0.3s;
             touch-action: manipulation;
         }
-
-        .btn:active {
-            transform: scale(0.98);
+ 
+        .btn:active    { transform: scale(0.98); }
+        .btn-primary   { background-color: #7B68EE; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+ 
+        .info-box {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 15px;
+            line-height: 1.6;
         }
-
-        .btn-primary {
-            background-color: #7B68EE;
-            color: white;
-            box-shadow: 0 4px 12px rgba(123, 104, 238, 0.3);
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-        }
-
+ 
+        .info-box.member-info    { background-color: #E3F2FD; color: #1565C0; border: 2px solid #BBDEFB; }
+        .info-box.nonmember-info { background-color: #FFF3E0; color: #E65100; border: 2px solid #FFCC80; }
+ 
         .legend {
             margin: 20px 0;
             padding: 20px;
             background-color: white;
             border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
-        .legend h3 {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 20px;
-        }
-
+ 
+        .legend h3 { margin-bottom: 15px; color: #333; font-size: 20px; }
+ 
         .legend-items {
             display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
         }
-
+ 
         .legend-item {
             display: flex;
             align-items: center;
@@ -430,10 +628,9 @@
             font-size: 16px;
             line-height: 1.5;
         }
-
+ 
         .legend-badge {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -442,7 +639,7 @@
             font-size: 16px;
             flex-shrink: 0;
         }
-
+ 
         .help-text {
             background-color: #E3F2FD;
             padding: 15px;
@@ -452,564 +649,278 @@
             line-height: 1.6;
             color: #1976D2;
         }
-
+ 
         .sync-notification {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 20px; right: 20px;
             background: #28a745;
             color: white;
             padding: 15px 25px;
             border-radius: 8px;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 4px 15px rgba(40,167,69,0.4);
             z-index: 10000;
             display: none;
-            animation: slideInRight 0.3s ease-out;
         }
-
-        .sync-notification.show {
-            display: block;
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-
+ 
         .sync-status {
             position: fixed;
-            top: 20px;
-            left: 20px;
+            top: 20px; left: 20px;
             padding: 10px 20px;
             border-radius: 8px;
             font-weight: bold;
             font-size: 14px;
             z-index: 9999;
         }
-
-        .sync-online {
-            background-color: #d4edda;
-            color: #155724;
+ 
+        .sync-online  { background-color: #d4edda; color: #155724; }
+        .sync-offline { background-color: #f8d7da; color: #721c24; }
+ 
+        .uploading-spinner {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: #E65100;
+            font-weight: bold;
         }
-
-        .sync-offline {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
+ 
         @media (max-width: 767px) and (orientation: portrait) {
-            body {
-                padding: 5px;
-                font-size: 16px;
-            }
-
-            .container {
-                padding: 8px;
-            }
-
-            .help-text {
-                padding: 10px;
-                font-size: 13px;
-                margin-bottom: 12px;
-            }
-
-            .controls {
-                margin-bottom: 12px;
-            }
-
-            .controls h2 {
-                font-size: 18px;
-            }
-
-            .controls button {
-                padding: 10px 15px;
-                font-size: 15px;
-                min-width: 80px;
-            }
-
-            .equipment-selector {
-                padding: 10px;
-                margin-bottom: 12px;
-            }
-
-            .equipment-selector label {
-                font-size: 16px;
-                margin-bottom: 8px;
-            }
-
-            .equipment-selector select {
-                padding: 12px;
-                font-size: 16px;
-            }
-
-            .legend {
-                padding: 12px;
-                margin: 12px 0;
-            }
-
-            .legend h3 {
-                font-size: 16px;
-                margin-bottom: 10px;
-            }
-
-            .legend-items {
-                gap: 10px;
-            }
-
-            .legend-item {
-                font-size: 13px;
-                gap: 10px;
-            }
-
-            .legend-badge {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-
-            .calendar-wrapper {
-                margin: 0 -8px;
-                border-radius: 0;
-            }
-
-            .calendar {
-                min-width: 800px;
-            }
-
-            .calendar thead th {
-                padding: 10px 4px;
-                font-size: 12px;
-                letter-spacing: 0;
-            }
-
-            .calendar tbody td {
-                min-height: 100px;
-                height: 100px;
-                padding: 4px;
-            }
-
-            .day-number {
-                font-size: 16px;
-                padding: 2px 5px;
-                top: 3px;
-                right: 3px;
-            }
-
-            .booking-count {
-                width: 26px;
-                height: 26px;
-                font-size: 13px;
-                top: 3px;
-                left: 3px;
-            }
-
-            .booking-overview {
-                bottom: 22px;
-                left: 3px;
-                right: 3px;
-                font-size: 9px;
-            }
-
-            .equipment-badge {
-                padding: 3px 5px;
-                font-size: 9px;
-                margin: 1px;
-            }
-
-            .availability-bar {
-                height: 8px;
-                bottom: 3px;
-                left: 3px;
-                right: 3px;
-            }
-
-            .sync-notification {
-                top: 10px;
-                right: 10px;
-                padding: 10px 15px;
-                font-size: 14px;
-            }
-
-            .sync-status {
-                top: 10px;
-                left: 10px;
-                padding: 8px 15px;
-                font-size: 12px;
-            }
+            body { padding: 5px; font-size: 16px; }
+            .container { padding: 8px; }
+            .controls h2 { font-size: 18px; }
+            .controls button { padding: 10px 15px; font-size: 15px; min-width: 80px; }
+            .calendar-wrapper { margin: 0 -8px; border-radius: 0; }
+            .calendar { min-width: 800px; }
+            .calendar thead th { padding: 10px 4px; font-size: 12px; }
+            .calendar tbody td { min-height: 100px; height: 100px; padding: 4px; }
+            .day-number { font-size: 16px; }
+            .booking-count { width: 26px; height: 26px; font-size: 13px; }
+            .booker-type-btn { padding: 15px 10px; font-size: 16px; }
+            .booker-type-btn .type-icon { font-size: 26px; }
+            .indemnity-text { max-height: 180px; font-size: 13px; }
+            .time-slots { grid-template-columns: repeat(2, 1fr); }
         }
-
-        @media (max-width: 767px) and (orientation: landscape) {
-            body {
-                padding: 5px;
-                font-size: 14px;
-            }
-
-            .container {
-                padding: 5px;
-            }
-
-            .help-text {
-                padding: 8px;
-                font-size: 11px;
-                margin-bottom: 8px;
-            }
-
-            .controls {
-                margin-bottom: 8px;
-            }
-
-            .controls h2 {
-                font-size: 14px;
-            }
-
-            .controls button {
-                padding: 8px 12px;
-                font-size: 13px;
-                min-width: 70px;
-            }
-
-            .equipment-selector {
-                padding: 8px;
-                margin-bottom: 8px;
-            }
-
-            .equipment-selector label {
-                font-size: 13px;
-                margin-bottom: 5px;
-            }
-
-            .equipment-selector select {
-                padding: 8px;
-                font-size: 13px;
-            }
-
-            .legend {
-                padding: 8px;
-                margin: 8px 0;
-            }
-
-            .legend h3 {
-                font-size: 13px;
-                margin-bottom: 6px;
-            }
-
-            .legend-items {
-                gap: 6px;
-            }
-
-            .legend-item {
-                font-size: 10px;
-                gap: 6px;
-            }
-
-            .legend-badge {
-                width: 24px;
-                height: 24px;
-                font-size: 11px;
-            }
-
-            .calendar-wrapper {
-                margin: 0 -5px;
-            }
-
-            .calendar {
-                min-width: 900px;
-            }
-
-            .calendar thead th {
-                padding: 6px 2px;
-                font-size: 10px;
-                letter-spacing: 0;
-            }
-
-            .calendar tbody td {
-                min-height: 80px;
-                height: 80px;
-                padding: 3px;
-            }
-
-            .day-number {
-                font-size: 13px;
-                padding: 1px 4px;
-                top: 2px;
-                right: 2px;
-            }
-
-            .booking-count {
-                width: 22px;
-                height: 22px;
-                font-size: 11px;
-                top: 2px;
-                left: 2px;
-            }
-
-            .booking-overview {
-                bottom: 18px;
-                left: 2px;
-                right: 2px;
-                font-size: 8px;
-            }
-
-            .equipment-badge {
-                padding: 2px 4px;
-                font-size: 8px;
-                margin: 0.5px;
-            }
-
-            .availability-bar {
-                height: 6px;
-                bottom: 2px;
-                left: 2px;
-                right: 2px;
-            }
-
-            .modal-content {
-                margin: 10px auto;
-                padding: 15px;
-                width: 98%;
-            }
-
-            .modal-header h2 {
-                font-size: 18px;
-            }
-
-            .close {
-                font-size: 30px;
-                width: 40px;
-                height: 40px;
-            }
-
-            .modal-date {
-                font-size: 14px;
-                margin-bottom: 12px;
-            }
-
-            .form-group {
-                margin-bottom: 12px;
-            }
-
-            .form-group label {
-                font-size: 14px;
-                margin-bottom: 5px;
-            }
-
-            .form-group input,
-            .form-group select {
-                padding: 10px;
-                font-size: 14px;
-                border-width: 2px;
-            }
-
-            .time-slots {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-
-            .time-slot {
-                padding: 10px;
-                font-size: 13px;
-                border-width: 2px;
-            }
-
-            .time-slot.booked::after {
-                font-size: 10px;
-                margin-top: 3px;
-            }
-
-            .form-actions {
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-                margin-top: 12px;
-            }
-
-            .btn {
-                padding: 12px;
-                font-size: 14px;
-            }
-
-            .sync-notification {
-                top: 5px;
-                right: 5px;
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-
-            .sync-status {
-                top: 5px;
-                left: 5px;
-                padding: 6px 12px;
-                font-size: 11px;
-            }
-        }
-
+ 
         @media (min-width: 768px) {
-            .calendar thead th {
-                font-size: 16px;
-                padding: 15px;
-            }
-
-            .calendar tbody td {
-                height: 140px;
-            }
-
-            .time-slots {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .form-actions {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .legend-items {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .calendar thead th { font-size: 16px; padding: 15px; }
+            .calendar tbody td { height: 140px; }
+            .time-slots { grid-template-columns: repeat(3, 1fr); }
+            .form-actions { grid-template-columns: 1fr 1fr; }
+            .legend-items { grid-template-columns: repeat(2, 1fr); }
         }
-
+ 
         @media (min-width: 1024px) {
-            .time-slots {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .legend-items {
-                grid-template-columns: repeat(3, 1fr);
-            }
+            .time-slots { grid-template-columns: repeat(4, 1fr); }
+            .legend-items { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
-    <!-- Sync Status Indicator -->
     <div class="sync-status" id="syncStatus">🔄 Connecting...</div>
-
-    <!-- Sync Notification -->
-    <div class="sync-notification" id="syncNotification">
-        🔄 Member list updated!
-    </div>
-
+    <div class="sync-notification" id="syncNotification">🔄 Updated!</div>
+ 
     <div class="container">
         <div class="help-text">
-            🚣 <strong>How to use:</strong> Tap any date to see available time slots and make a booking. Green means available, red means busy. <strong>Only registered members can book equipment.</strong>
+            🚣 <strong>How to use:</strong> Tap any date to book equipment. Members use password to access member names. Guest bookings require name, phone number, payment slip and indemnity agreement.
         </div>
-
+ 
         <div class="controls">
-            <button id="prevMonth" aria-label="Previous month">← Prev</button>
-            <h2 id="currentMonth">January 2026</h2>
-            <button id="nextMonth" aria-label="Next month">Next →</button>
+            <button id="prevMonth">← Prev</button>
+            <h2 id="currentMonth">Loading...</h2>
+            <button id="nextMonth">Next →</button>
         </div>
-
+ 
         <div class="equipment-selector">
             <label for="equipmentSelect">🚣 Filter by Equipment:</label>
-            <select id="equipmentSelect" aria-label="Select equipment to filter">
+            <select id="equipmentSelect">
                 <option value="">All Equipment (Overview)</option>
                 <option value="OC1.1">🛶 OC1.1</option>
                 <option value="OC1.2">🛶 OC1.2</option>
-                <option value="T1">🚣 T1</option>
-                <option value="T2">🚣 T2</option>
-                <option value="T3">🚣 T3</option>
-                <option value="T4">🚣 T4</option>
-                <option value="T5">🚣 T5</option>
-                <option value="K1">🛶 K1</option>
-                <option value="K2">🛶 K2</option>
+                <option value="T1.1">🚣 T1.1</option>
+                <option value="T1.2">🚣 T1.2</option>
+                <option value="T1.3">🚣 T1.3</option>
+                <option value="T1.4">🚣 T1.4</option>
+                <option value="T1.5">🚣 T1.5</option>
+                <option value="K1.1">🛶 K1.1</option>
+                <option value="K1.2">🛶 K1.2</option>
             </select>
         </div>
-
+ 
         <div class="legend">
-            <h3>📊 What the numbers mean:</h3>
+            <h3>📊 Legend:</h3>
             <div class="legend-items">
                 <div class="legend-item">
-                    <div class="legend-badge" style="background-color: #FF6B4A; color: white;">3</div>
-                    <span>Number shows total bookings for that day</span>
+                    <div class="legend-badge" style="background-color:#FF6B4A;color:white;">3</div>
+                    <span>Total bookings for that day</span>
                 </div>
                 <div class="legend-item">
-                    <div style="width: 60px; height: 10px; background: linear-gradient(to right, #4CAF50, #FFC107, #F44336); border-radius: 5px; flex-shrink: 0;"></div>
+                    <div style="width:60px;height:10px;background:linear-gradient(to right,#4CAF50,#FFC107,#F44336);border-radius:5px;flex-shrink:0;"></div>
                     <span>Green = Available, Red = Busy</span>
                 </div>
                 <div class="legend-item">
-                    <span class="equipment-badge eq-oc1">OC1</span>
-                    <span class="equipment-badge eq-t">T</span>
-                    <span class="equipment-badge eq-k">K</span>
+                    <span class="booking-type-badge badge-member">Member</span>
+                    <span style="margin-left:5px;">Blue = Member booking</span>
+                </div>
+                <div class="legend-item">
+                    <span class="booking-type-badge badge-nonmember">Guest</span>
+                    <span style="margin-left:5px;">Orange = Guest booking</span>
                 </div>
             </div>
         </div>
-
+ 
         <div class="calendar-wrapper">
-            <table class="calendar" role="grid" aria-label="Booking calendar">
+            <table class="calendar" role="grid">
                 <thead>
                     <tr>
-                        <th scope="col">MON</th>
-                        <th scope="col">TUE</th>
-                        <th scope="col">WED</th>
-                        <th scope="col">THU</th>
-                        <th scope="col">FRI</th>
-                        <th scope="col">SAT</th>
-                        <th scope="col">SUN</th>
+                        <th>MON</th><th>TUE</th><th>WED</th><th>THU</th>
+                        <th>FRI</th><th>SAT</th><th>SUN</th>
                     </tr>
                 </thead>
-                <tbody id="calendarBody">
-                    <!-- Calendar will be generated here -->
-                </tbody>
+                <tbody id="calendarBody"></tbody>
             </table>
         </div>
     </div>
-
-    <div id="bookingModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+ 
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">🚣 Book Equipment</h2>
-                <button class="close" aria-label="Close booking form">&times;</button>
+                <h2>🚣 Book Equipment</h2>
+                <button class="close">&times;</button>
             </div>
             <div id="modalDate" class="modal-date"></div>
-
+ 
             <form id="bookingForm">
                 <div class="form-group">
-                    <label for="memberSelect">👤 Select Your Name (Members Only):</label>
-                    <select id="memberSelect" required aria-required="true">
-                        <option value="">-- Choose your name --</option>
-                    </select>
+                    <label>👤 Who is booking?</label>
+                    <div class="booker-type-selector">
+                        <button type="button" class="booker-type-btn" id="btnMember">
+                            <span class="type-icon">🏅</span>Member
+                        </button>
+                        <button type="button" class="booker-type-btn" id="btnNonMember">
+                            <span class="type-icon">🎓</span>Guest
+                        </button>
+                    </div>
                 </div>
-
-                <div class="form-group">
+ 
+                <div class="password-section" id="passwordSection">
+                    <label>🔑 Enter Member Password:</label>
+                    <div class="password-input-row">
+                        <input type="password" id="memberPassword" placeholder="Enter password..." autocomplete="off">
+                        <button type="button" id="verifyPasswordBtn">Verify</button>
+                    </div>
+                    <div id="passwordError" style="color:#dc3545;margin-top:8px;font-size:14px;display:none;">
+                        ❌ Incorrect password. Please try again.
+                    </div>
+                </div>
+ 
+                <div class="member-section" id="memberSection">
+                    <div class="info-box member-info">✅ Member access granted! Select your name below.</div>
+                    <div class="form-group">
+                        <label for="memberSelect">👤 Select Your Name:</label>
+                        <select id="memberSelect">
+                            <option value="">-- Choose your name --</option>
+                        </select>
+                    </div>
+                </div>
+ 
+                <div class="nonmember-section" id="nonMemberSection">
+                    <div class="info-box nonmember-info">
+                        🎓 Guest bookings can use T1–T5 and K1–K2 only. Name, phone number, payment slip and indemnity agreement are required.
+                    </div>
+                </div>
+ 
+                <div class="ntu-contact-section" id="ntuContactSection">
+                    <h3>📋 Your Contact Details</h3>
+                    <div class="form-group">
+                        <label for="ntuName">Full Name <span class="required-star">*</span></label>
+                        <input type="text" id="ntuName" placeholder="Enter your full name" autocomplete="name">
+                        <div class="field-error" id="ntuNameError">⚠️ Please enter your full name.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ntuPhone">Phone Number <span class="required-star">*</span></label>
+                        <input type="tel" id="ntuPhone" placeholder="e.g. 91234567" autocomplete="tel" maxlength="15">
+                        <div class="field-error" id="ntuPhoneError">⚠️ Please enter a valid phone number.</div>
+                    </div>
+                </div>
+ 
+                <div class="form-group" id="equipmentSection" style="display:none;">
                     <label for="equipmentChoice">🚣 Select Equipment:</label>
-                    <select id="equipmentChoice" required aria-required="true">
+                    <select id="equipmentChoice">
                         <option value="">Choose equipment...</option>
-                        <option value="OC1.1">🛶 OC1.1</option>
-                        <option value="OC1.2">🛶 OC1.2</option>
-                        <option value="T1">🚣 T1</option>
-                        <option value="T2">🚣 T2</option>
-                        <option value="T3">🚣 T3</option>
-                        <option value="T4">🚣 T4</option>
-                        <option value="T5">🚣 T5</option>
-                        <option value="K1">🛶 K1</option>
-                        <option value="K2">🛶 K2</option>
                     </select>
                 </div>
-
-                <div class="form-group">
+ 
+                <div class="form-group" id="timeSlotSection" style="display:none;">
                     <label>🕐 Choose Time Slot:</label>
-                    <div class="help-text" style="margin-top: 10px;">
+                    <div class="help-text" style="margin-top:10px;">
                         Tap a time slot below. ❌ means already taken.
                     </div>
-                    <div id="timeSlots" class="time-slots" role="radiogroup" aria-label="Available time slots">
+                    <div id="timeSlots" class="time-slots"></div>
+                </div>
+ 
+                <div class="upload-section" id="paymentSlipSection" style="display:none;">
+                    <label>💳 Upload Payment Slip <span class="required-star">*</span></label>
+                    <input type="file" id="paymentSlipFile" accept="image/*" capture="environment">
+                    <div class="upload-preview" id="uploadPreview">
+                        <img id="previewImage" src="" alt="Payment slip preview">
+                    </div>
+                    <div class="upload-status" id="uploadStatus"></div>
+                    <div class="uploading-spinner" id="uploadingSpinner">⏳ Uploading...</div>
+                </div>
+ 
+                <div class="indemnity-section" id="indemnitySection">
+                    <div class="indemnity-header">
+                        ⚠️ Indemnity &amp; Waiver Form <span class="required-star" style="color:#ffcccc;">*</span>
+                    </div>
+                    <div class="indemnity-body">
+                        <div class="indemnity-scroll-hint">📜 Please read the full indemnity form below before agreeing.</div>
+                        <div class="indemnity-text" id="indemnityText">
+                            <h4>INDEMNITY AND WAIVER OF LIABILITY FORM</h4>
+                            <p style="text-align:center;"><strong>Seahawk Sports Club ("the Club")</strong></p>
+                            <p>Please read this form carefully before using the Club's equipment or participating in any water sports activities.</p>
+                            <hr>
+                            <h5>1. ACKNOWLEDGEMENT OF RISKS</h5>
+                            <p>I understand and acknowledge that participation in water sports activities, including but not limited to kayaking and paddling in T1 and K1 crafts, involves inherent risks and dangers, including but not limited to:</p>
+                            <ol>
+                                <li>Drowning or near-drowning incidents</li>
+                                <li>Physical injury from equipment or other participants</li>
+                                <li>Adverse weather and water conditions</li>
+                                <li>Capsizing of watercraft</li>
+                                <li>Collision with other watercraft or objects</li>
+                                <li>Fatigue, cramps, or medical emergencies</li>
+                            </ol>
+                            <hr>
+                            <h5>2. ASSUMPTION OF RISK</h5>
+                            <p>I voluntarily assume all risks associated with the use of the Club's equipment and participation in water sports activities organised, facilitated, or undertaken in connection with Seahawk Sports Club. I confirm that I am physically fit and capable of participating in such activities.</p>
+                            <hr>
+                            <h5>3. CERTIFICATION REQUIREMENT</h5>
+                            <p>I confirm that I possess a valid 1-Star Kayaking Certification (or equivalent recognised certification). I understand that this certification is a minimum requirement to use the Club's T1 and K1 crafts. I agree to provide proof of certification if requested by the Club.</p>
+                            <hr>
+                            <h5>4. WAIVER OF LIABILITY</h5>
+                            <p>In consideration of being permitted to use the Club's equipment, including T1 and K1 crafts, I hereby release, waive, discharge, and covenant not to sue Seahawk Sports Club and its members, representatives, and volunteers from any and all liability, claims, demands, actions, and causes of action arising out of or related to any loss, damage, or injury, including death, that may be sustained by me while using the Club's equipment or participating in any related activity.</p>
+                            <hr>
+                            <h5>5. EQUIPMENT RESPONSIBILITY</h5>
+                            <p>I agree to take full responsibility for the proper use and care of any equipment borrowed from the Club. I agree to return all equipment in good condition and to pay for any damage or loss caused due to negligence or misuse.</p>
+                            <hr>
+                            <h5>6. SAFETY COMPLIANCE</h5>
+                            <p>I agree to comply with all safety guidelines and rules established by Seahawk Sports Club. I agree to wear all required safety equipment, including personal flotation devices (PFDs), where required or recommended.</p>
+                            <hr>
+                            <h5>7. MEDICAL CONDITIONS</h5>
+                            <p>I confirm that I do not have any medical conditions that would prevent me from safely participating in water sports activities. I agree to take full responsibility for my health and safety while using the Club's equipment.</p>
+                            <hr>
+                            <h5>8. GOVERNING LAW</h5>
+                            <p>This agreement shall be governed by and construed in accordance with the laws of Singapore.</p>
+                        </div>
+                        <div class="indemnity-agree" id="indemnityAgreeBox">
+                            <input type="checkbox" class="indemnity-checkbox" id="indemnityCheckbox">
+                            <label class="indemnity-agree-text" for="indemnityCheckbox">
+                                I have read, understood, and agree to the Indemnity and Waiver of Liability Form above. I confirm that all information provided is accurate and I voluntarily accept all terms and conditions. <span class="required-star">*</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
-
+ 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">✅ Confirm Booking</button>
                     <button type="button" class="btn btn-secondary" id="cancelBooking">❌ Cancel</button>
@@ -1017,455 +928,711 @@
             </form>
         </div>
     </div>
-
+ 
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src=https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js></script>
+    <script type="text/javascript">
+        window.__emailjs = emailjs;
+    </script>
+ 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, set, push, remove, onValue, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
-
-        // 🔥 Firebase Configuration
+        import { getDatabase, ref, set, push, remove, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+ 
+        const emailjs = window.__emailjs;       
         const firebaseConfig = {
             apiKey: "AIzaSyB06dbfHFYW-suHhYl1NJT1DUysFM5dED4",
             authDomain: "sh-booking-system.firebaseapp.com",
-            databaseURL: "https://sh-booking-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+            databaseURL: https://sh-booking-system-default-rtdb.asia-southeast1.firebasedatabase.app,
             projectId: "sh-booking-system",
             storageBucket: "sh-booking-system.firebasestorage.app",
             messagingSenderId: "874524623701",
             appId: "1:874524623701:web:091abbff8b4bd291ce65dc"
         };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
+ 
+        const app      = initializeApp(firebaseConfig);
         const database = getDatabase(app);
-
-        // ============================================
-        // ACTIVE USER TRACKING
-        // ============================================
-
-        const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        const activeUserRef = ref(database, `activeUsers/${sessionId}`);
-
-        // Register this booking page as active
-        set(activeUserRef, {
-            timestamp: Date.now(),
-            page: 'booking'
-        });
-
-        // Send heartbeat every 10 seconds
-        setInterval(() => {
-            set(activeUserRef, {
-                timestamp: Date.now(),
-                page: 'booking'
-            });
-        }, 10000);
-
-        // Remove session when page closes
-        window.addEventListener('beforeunload', () => {
-            remove(activeUserRef);
-        });
-
-        // ============================================
-        // SYNC STATUS INDICATOR
-        // ============================================
-
-        function updateSyncStatus(online) {
-            const syncStatus = document.getElementById('syncStatus');
-            if (online) {
-                syncStatus.className = 'sync-status sync-online';
-                syncStatus.textContent = '✅ Connected';
-            } else {
-                syncStatus.className = 'sync-status sync-offline';
-                syncStatus.textContent = '❌ Offline';
-            }
-        }
-
-        // ============================================
-        // GLOBAL VARIABLES
-        // ============================================
-
-        let currentMonth = 0;
-        let currentYear = 2026;
-        let selectedEquipment = '';
-        let members = [];
-        let bookings = [];
-
+        const storage  = getStorage(app);
+ 
+        const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+        const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+        const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+ 
+        const MEMBER_PASSWORD     = 'Tjcsn1983!';
+        const MEMBER_EQUIPMENT    = ['OC1.1', 'OC1.2', 'T1.1', 'T1.2', 'T1.3', 'T1.4', 'T1.5', 'K1.1', 'K1.2'];
+        const NONMEMBER_EQUIPMENT = ['T1.1', 'T1.2', 'T1.3', 'T1.4', 'T1.5', 'K1.1', 'K1.2'];
+ 
         const timeSlots = [
-            '07:00-08:00', '08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00',
-            '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00',
-            '17:00-18:00'
+            '07:00 - 08:00', '08:00 - 09:00', '09:00 - 10:00',
+            '10:00 - 11:00', '11:00 - 12:00', '12:00 - 13:00',
+            '13:00 - 14:00', '14:00 - 15:00', '15:00 - 16:00',
+            '16:00 - 17:00', '17:00 - 18:00'
         ];
-
-        const equipmentColors = {
-            'OC1.1': 'eq-oc1',
-            'OC1.2': 'eq-oc1',
-            'T1': 'eq-t',
-            'T2': 'eq-t',
-            'T3': 'eq-t',
-            'T4': 'eq-t',
-            'T5': 'eq-t',
-            'K1': 'eq-k',
-            'K2': 'eq-k'
-        };
-
-        // ============================================
-        // FIREBASE REAL-TIME SYNC - MEMBERS
-        // ============================================
-
-        const membersRef = ref(database, 'members');
-        onValue(membersRef, (snapshot) => {
+ 
+        // ── STATE ──────────────────────────────────────────────
+        let currentMonth           = new Date().getMonth();
+        let currentYear            = new Date().getFullYear();
+        let selectedDate           = null;
+        let selectedTimeSlot       = null;
+        let bookerType             = null;
+        let memberPasswordVerified = false;
+        let paymentSlipURL         = null;
+        let bookings               = [];
+        let members                = [];
+        let selectedEquipment      = '';
+        let isSubmitting           = false;   // BUG 7 FIX
+ 
+        // ── SESSION TRACKING ───────────────────────────────────
+        const sessionId     = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        const activeUserRef = ref(database, `activeUsers/${sessionId}`);
+        set(activeUserRef, { timestamp: Date.now(), page: 'booking' });
+        setInterval(() => set(activeUserRef, { timestamp: Date.now(), page: 'booking' }), 10000);
+        window.addEventListener('beforeunload', () => remove(activeUserRef));
+ 
+        // ── SYNC STATUS ────────────────────────────────────────
+        function updateSyncStatus(online) {
+            const el       = document.getElementById('syncStatus');
+            el.textContent = online ? '✅ Live' : '❌ Offline';
+            el.className   = `sync-status ${online ? 'sync-online' : 'sync-offline'}`;
+        }
+ 
+        // ── FIREBASE: MEMBERS ──────────────────────────────────
+        onValue(ref(database, 'members'), (snapshot) => {
             const data = snapshot.val();
-            members = data ? Object.values(data).sort() : [];
-            
-            console.log('✅ Member list synced:', members.length, 'members');
-            populateMemberDropdown();
+            members = data
+                ? Object.values(data).sort((a, b) => a.localeCompare(b))
+                : [];
+            updateMemberDropdown();
             updateSyncStatus(true);
-            showSyncNotification();
-        }, (error) => {
-            console.error('❌ Firebase error:', error);
-            updateSyncStatus(false);
-        });
-
-        function populateMemberDropdown() {
+        }, () => updateSyncStatus(false));
+ 
+        function updateMemberDropdown() {
             const memberSelect = document.getElementById('memberSelect');
             const currentValue = memberSelect.value;
-            
             memberSelect.innerHTML = '<option value="">-- Choose your name --</option>';
-            
-            members.forEach(memberName => {
-                const option = document.createElement('option');
-                option.value = memberName;
-                option.textContent = memberName;
+            members.forEach(name => {
+                const option       = document.createElement('option');
+                option.value       = name;
+                option.textContent = name;
                 memberSelect.appendChild(option);
             });
-            
-            // Restore previous selection if still exists
-            if (currentValue && members.includes(currentValue)) {
-                memberSelect.value = currentValue;
-            }
+            if (currentValue && members.includes(currentValue)) memberSelect.value = currentValue;
         }
-
-        function showSyncNotification() {
-            const notification = document.getElementById('syncNotification');
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideOutRight 0.3s ease-out';
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                    notification.style.animation = '';
-                }, 300);
-            }, 3000);
-        }
-
-        // ============================================
-        // FIREBASE REAL-TIME SYNC - BOOKINGS
-        // ============================================
-
-        const bookingsRef = ref(database, 'bookings');
-        onValue(bookingsRef, (snapshot) => {
+ 
+        // ── FIREBASE: BOOKINGS ─────────────────────────────────
+        onValue(ref(database, 'bookings'), (snapshot) => {
             const data = snapshot.val();
-            
-            if (data) {
-                bookings = Object.keys(data).map(key => {
-                    const booking = data[key];
-                    return {
-                        ...booking,
-                        id: key,
-                        date: new Date(booking.dateString)
-                    };
-                });
-            } else {
-                bookings = [];
-            }
-            
-            console.log('✅ Bookings synced:', bookings.length, 'bookings');
+            bookings = data
+                ? Object.keys(data).map(key => ({
+                    ...data[key],
+                    id:   key,
+                    date: new Date(data[key].dateString + 'T00:00:00')
+                }))
+                : [];
             renderCalendar();
-        });
-
-        // ============================================
-        // CALENDAR FUNCTIONS
-        // ============================================
-
-        function setupEventListeners() {
-            document.getElementById('prevMonth').addEventListener('click', () => {
-                currentMonth--;
-                if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                }
-                renderCalendar();
+            updateSyncStatus(true);
+        }, () => updateSyncStatus(false));
+ 
+        // ── EMAILJS ────────────────────────────────────────────
+        async function sendGuestBookingEmail(bookingDetails) {
+            const { guestName, guestPhone, equipment, dateString, timeSlot, paymentSlipURL } = bookingDetails;
+            const dateObj       = new Date(dateString + 'T00:00:00');
+            const formattedDate = dateObj.toLocaleDateString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
             });
-
-            document.getElementById('nextMonth').addEventListener('click', () => {
-                currentMonth++;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                renderCalendar();
-            });
-
-            document.getElementById('equipmentSelect').addEventListener('change', (e) => {
-                selectedEquipment = e.target.value;
-                renderCalendar();
-            });
-
-            document.querySelector('.close').addEventListener('click', () => {
-                document.getElementById('bookingModal').style.display = 'none';
-            });
-
-            document.getElementById('cancelBooking').addEventListener('click', () => {
-                document.getElementById('bookingModal').style.display = 'none';
-            });
-
-            document.getElementById('bookingForm').addEventListener('submit', handleBookingSubmit);
-
-            window.addEventListener('click', (e) => {
-                if (e.target.id === 'bookingModal') {
-                    e.target.style.display = 'none';
-                }
-            });
+            const templateParams = {
+                guest_name:       guestName,
+                guest_phone:      guestPhone,
+                equipment:        equipment,
+                date:             formattedDate,
+                time_slot:        timeSlot,
+                payment_slip_url: paymentSlipURL || 'Not provided',
+                booked_at:        new Date().toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })
+            };
+            try {
+                const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                console.log('✅ Email sent:', response.status, response.text);
+                return true;
+            } catch (error) {
+                console.error('❌ Email failed:', error);
+                return false;
+            }
         }
-
+ 
+        // ── RENDER CALENDAR ────────────────────────────────────
         function renderCalendar() {
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                               'July', 'August', 'September', 'October', 'November', 'December'];
-            
+            const monthNames = [
+                'January','February','March','April','May','June',
+                'July','August','September','October','November','December'
+            ];
             document.getElementById('currentMonth').textContent = `${monthNames[currentMonth]} ${currentYear}`;
-            
-            const firstDay = new Date(currentYear, currentMonth, 1);
-            const lastDay = new Date(currentYear, currentMonth + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            
+ 
+            const firstDay          = new Date(currentYear, currentMonth, 1);
+            const lastDay           = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth       = lastDay.getDate();
             const startingDayOfWeek = firstDay.getDay();
-            const adjustedStart = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
-            
-            const calendarBody = document.getElementById('calendarBody');
-            calendarBody.innerHTML = '';
-            
-            let day = 1;
-            const totalCells = daysInMonth + adjustedStart;
-            const rows = Math.ceil(totalCells / 7);
-            
+            const adjustedStart     = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
+            const calendarBody      = document.getElementById('calendarBody');
+            calendarBody.innerHTML  = '';
+ 
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+ 
+            const rows = Math.ceil((daysInMonth + adjustedStart) / 7);
+            let day    = 1;
+ 
             for (let i = 0; i < rows; i++) {
                 const row = document.createElement('tr');
-                
+ 
                 for (let j = 0; j < 7; j++) {
-                    const cell = document.createElement('td');
+                    const cell      = document.createElement('td');
                     const cellIndex = i * 7 + j;
-                    
-                
+ 
                     if (cellIndex < adjustedStart || day > daysInMonth) {
                         cell.classList.add('empty');
                         row.appendChild(cell);
                         continue;
                     }
-                    
+ 
                     const currentDay = day;
-                    const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(currentDay).padStart(2, '0')}`;
-                    
+                    const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2,'0')}-${String(currentDay).padStart(2,'0')}`;
+                    const cellDate   = new Date(currentYear, currentMonth, currentDay);
+                    const isPast     = cellDate < today;
+ 
+                    if (isPast) {
+                        cell.classList.add('past-date');
+                    } else {
+                        cell.addEventListener('click', () => openBookingModal(dateString));
+                    }
+ 
                     // Day number
-                    const dayNumber = document.createElement('div');
-                    dayNumber.className = 'day-number';
+                    const dayNumber       = document.createElement('div');
+                    dayNumber.className   = 'day-number';
                     dayNumber.textContent = currentDay;
                     cell.appendChild(dayNumber);
-                    
-                    // Get bookings for this day
-                    const dayBookings = bookings.filter(b => {
-                        const bookingDate = `${b.date.getFullYear()}-${String(b.date.getMonth() + 1).padStart(2, '0')}-${String(b.date.getDate()).padStart(2, '0')}`;
-                        return bookingDate === dateString;
-                    });
-                    
-                    // Filter by selected equipment if any
-                    const filteredBookings = selectedEquipment 
-                        ? dayBookings.filter(b => b.equipment === selectedEquipment)
-                        : dayBookings;
-                    
-                    // Show booking count
-                    if (filteredBookings.length > 0) {
-                        const bookingCount = document.createElement('div');
-                        bookingCount.className = 'booking-count';
-                        bookingCount.textContent = filteredBookings.length;
-                        cell.appendChild(bookingCount);
-                    }
-                    
-                    // Show equipment overview (only when no filter is selected)
-                    if (!selectedEquipment && dayBookings.length > 0) {
-                        const overview = document.createElement('div');
-                        overview.className = 'booking-overview';
-                        
-                        const equipmentCounts = {};
-                        dayBookings.forEach(b => {
-                            const eqType = b.equipment.match(/^[A-Z]+/)[0];
-                            equipmentCounts[eqType] = (equipmentCounts[eqType] || 0) + 1;
+ 
+                    // BUG 5 FIX: Only show booking info on non-past dates
+                    if (!isPast) {
+                        const dayBookings = bookings.filter(b => {
+                            const bd = `${b.date.getFullYear()}-${String(b.date.getMonth()+1).padStart(2,'0')}-${String(b.date.getDate()).padStart(2,'0')}`;
+                            return bd === dateString;
                         });
-                        
-                        Object.keys(equipmentCounts).forEach(eqType => {
-                            const badge = document.createElement('span');
-                            badge.className = `equipment-badge eq-${eqType.toLowerCase()}`;
-                            badge.textContent = `${eqType}:${equipmentCounts[eqType]}`;
-                            overview.appendChild(badge);
-                        });
-                        
-                        cell.appendChild(overview);
+ 
+                        const filteredBookings = selectedEquipment
+                            ? dayBookings.filter(b => b.equipment === selectedEquipment)
+                            : dayBookings;
+ 
+                        // Booking count badge
+                        if (filteredBookings.length > 0) {
+                            const bookingCount       = document.createElement('div');
+                            bookingCount.className   = 'booking-count';
+                            bookingCount.textContent = filteredBookings.length;
+                            cell.appendChild(bookingCount);
+                        }
+ 
+                        // Overview badges (only when no filter)
+                        if (!selectedEquipment && dayBookings.length > 0) {
+                            const overview     = document.createElement('div');
+                            overview.className = 'booking-overview';
+ 
+                            const memberCount    = dayBookings.filter(b => b.bookerType === 'member').length;
+                            const nonMemberCount = dayBookings.filter(b => b.bookerType === 'nonmember').length;
+ 
+                            if (memberCount > 0) {
+                                const badge       = document.createElement('span');
+                                badge.className   = 'booking-type-badge badge-member';
+                                badge.textContent = `M:${memberCount}`;
+                                overview.appendChild(badge);
+                            }
+                            if (nonMemberCount > 0) {
+                                const badge       = document.createElement('span');
+                                badge.className   = 'booking-type-badge badge-nonmember';
+                                badge.textContent = `Guest:${nonMemberCount}`;
+                                overview.appendChild(badge);
+                            }
+ 
+                            const equipmentCounts = {};
+                            dayBookings.forEach(b => {
+                                const eqType = b.equipment.replace(/[0-9.]/g, '').trim();
+                                equipmentCounts[eqType] = (equipmentCounts[eqType] || 0) + 1;
+                            });
+                            Object.keys(equipmentCounts).forEach(eqType => {
+                                const badge       = document.createElement('span');
+                                badge.className   = `equipment-badge eq-${eqType.toLowerCase()}`;
+                                badge.textContent = `${eqType}:${equipmentCounts[eqType]}`;
+                                overview.appendChild(badge);
+                            });
+ 
+                            cell.appendChild(overview);
+                        }
+ 
+                        // Availability bar
+                        const usedSlots    = selectedEquipment
+                            ? filteredBookings.length
+                            : Math.min(dayBookings.length, timeSlots.length);
+                        const usagePercent = Math.min((usedSlots / timeSlots.length) * 100, 100);
+ 
+                        const availBar      = document.createElement('div');
+                        availBar.className  = 'availability-bar';
+                        const availFill     = document.createElement('div');
+                        availFill.className = `availability-fill ${
+                            usagePercent < 40 ? 'avail-low' :
+                            usagePercent < 75 ? 'avail-medium' : 'avail-high'
+                        }`;
+                        availFill.style.width = `${usagePercent}%`;
+                        availBar.appendChild(availFill);
+                        cell.appendChild(availBar);
                     }
-                    
-                    // Availability bar
-                    const totalSlots = selectedEquipment ? timeSlots.length : timeSlots.length * 9; // 9 equipment items
-                    const bookedSlots = filteredBookings.length;
-                    const availabilityPercent = (bookedSlots / totalSlots) * 100;
-                    
-                    const availBar = document.createElement('div');
-                    availBar.className = 'availability-bar';
-                    
-                    const availFill = document.createElement('div');
-                    availFill.className = 'availability-fill';
-                    availFill.style.width = `${availabilityPercent}%`;
-                    
-                    if (availabilityPercent < 33) {
-                        availFill.classList.add('avail-low');
-                    } else if (availabilityPercent < 66) {
-                        availFill.classList.add('avail-medium');
-                    } else {
-                        availFill.classList.add('avail-high');
-                    }
-                    
-                    availBar.appendChild(availFill);
-                    cell.appendChild(availBar);
-                    
-                    // Click handler
-                    cell.addEventListener('click', () => openBookingModal(dateString));
-                    
+ 
                     row.appendChild(cell);
                     day++;
                 }
-                
                 calendarBody.appendChild(row);
             }
         }
-
-        // ============================================
-        // BOOKING MODAL FUNCTIONS
-        // ============================================
-
-        let selectedDate = '';
-        let selectedTimeSlot = '';
-
+ 
+        // ── MODAL HELPERS ──────────────────────────────────────
+        function resetModalSections() {
+            [
+                'passwordSection', 'memberSection', 'nonMemberSection',
+                'ntuContactSection', 'equipmentSection', 'timeSlotSection',
+                'paymentSlipSection', 'indemnitySection'
+            ].forEach(id => document.getElementById(id).style.display = 'none');
+        }
+ 
+        // BUG 1 FIX: Full reset on every modal open
         function openBookingModal(dateString) {
-            selectedDate = dateString;
-            selectedTimeSlot = '';
-            
-            const date = new Date(dateString + 'T00:00:00');
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const formattedDate = date.toLocaleDateString('en-US', options);
-            
-            document.getElementById('modalDate').textContent = `📅 ${formattedDate}`;
-            document.getElementById('bookingModal').style.display = 'block';
-            
-            // Reset form
-            document.getElementById('bookingForm').reset();
-            
-            // Populate time slots
-            populateTimeSlots(dateString);
-        }
-
-        function populateTimeSlots(dateString) {
-            const timeSlotsContainer = document.getElementById('timeSlots');
-            timeSlotsContainer.innerHTML = '';
-            
-            const equipmentChoice = document.getElementById('equipmentChoice').value;
-            
-            timeSlots.forEach(slot => {
-                const slotDiv = document.createElement('div');
-                slotDiv.className = 'time-slot';
-                slotDiv.textContent = slot;
-                slotDiv.dataset.slot = slot;
-                
-                // Check if this slot is already booked for the selected equipment
-                if (equipmentChoice) {
-                    const isBooked = bookings.some(b => {
-                        const bookingDate = `${b.date.getFullYear()}-${String(b.date.getMonth() + 1).padStart(2, '0')}-${String(b.date.getDate()).padStart(2, '0')}`;
-                        return bookingDate === dateString && 
-                               b.timeSlot === slot && 
-                               b.equipment === equipmentChoice;
-                    });
-                    
-                    if (isBooked) {
-                        slotDiv.classList.add('booked');
-                    }
-                }
-                
-                slotDiv.addEventListener('click', () => {
-                    if (!slotDiv.classList.contains('booked')) {
-                        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-                        slotDiv.classList.add('selected');
-                        selectedTimeSlot = slot;
-                    }
-                });
-                
-                timeSlotsContainer.appendChild(slotDiv);
+            selectedDate           = dateString;
+            selectedTimeSlot       = null;
+            bookerType             = null;
+            memberPasswordVerified = false;
+            paymentSlipURL         = null;
+            isSubmitting           = false;
+ 
+            resetModalSections();
+ 
+            document.getElementById('memberPassword').value                  = '';
+            document.getElementById('passwordError').style.display           = 'none';
+            document.getElementById('memberSelect').value                    = '';
+            document.getElementById('equipmentChoice').value                 = '';
+            document.getElementById('uploadStatus').textContent              = '';
+            document.getElementById('uploadPreview').style.display           = 'none';
+            document.getElementById('paymentSlipFile').value                 = '';
+            document.getElementById('indemnityCheckbox').checked             = false;
+            document.getElementById('indemnityAgreeBox').classList.remove('checked');
+            document.getElementById('ntuName').value                         = '';
+            document.getElementById('ntuPhone').value                        = '';
+            document.getElementById('ntuNameError').style.display            = 'none';
+            document.getElementById('ntuPhoneError').style.display           = 'none';
+            document.getElementById('ntuName').classList.remove('input-error');
+            document.getElementById('ntuPhone').classList.remove('input-error');
+            document.getElementById('timeSlots').innerHTML                   = '';
+            document.querySelector('.btn-primary').disabled                  = false;
+ 
+            document.querySelectorAll('.booker-type-btn').forEach(b =>
+                b.classList.remove('selected-member', 'selected-nonmember')
+            );
+ 
+            const dateObj   = new Date(dateString + 'T00:00:00');
+            const formatted = dateObj.toLocaleDateString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
             });
+            document.getElementById('modalDate').textContent      = `📅 ${formatted}`;
+            document.getElementById('bookingModal').style.display = 'block';
         }
-
-        // Update time slots when equipment is selected
-        document.getElementById('equipmentChoice').addEventListener('change', () => {
-            if (selectedDate) {
-                populateTimeSlots(selectedDate);
+ 
+        // ── MODAL CLOSE ────────────────────────────────────────
+        document.querySelector('.close').addEventListener('click', () => {
+            document.getElementById('bookingModal').style.display = 'none';
+        });
+        document.getElementById('cancelBooking').addEventListener('click', () => {
+            document.getElementById('bookingModal').style.display = 'none';
+        });
+        document.getElementById('bookingModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('bookingModal')) {
+                document.getElementById('bookingModal').style.display = 'none';
             }
         });
-
-        async function handleBookingSubmit(e) {
-            e.preventDefault();
-            
-            const memberName = document.getElementById('memberSelect').value;
-            const equipment = document.getElementById('equipmentChoice').value;
-            
-            if (!memberName || !equipment || !selectedTimeSlot) {
-                alert('⚠️ Please fill in all fields and select a time slot!');
-                return;
-            }
-            
-            // Double-check if slot is still available
-            const isBooked = bookings.some(b => {
-                const bookingDate = `${b.date.getFullYear()}-${String(b.date.getMonth() + 1).padStart(2, '0')}-${String(b.date.getDate()).padStart(2, '0')}`;
-                return bookingDate === selectedDate && 
-                       b.timeSlot === selectedTimeSlot && 
-                       b.equipment === equipment;
-            });
-            
-            if (isBooked) {
-                alert('❌ Sorry, this time slot was just booked by someone else. Please choose another slot.');
-                populateTimeSlots(selectedDate);
-                return;
-            }
-            
-            // Create booking
-            const booking = {
-                memberName,
-                equipment,
-                timeSlot: selectedTimeSlot,
-                dateString: selectedDate,
-                timestamp: Date.now()
-            };
-            
-            try {
-                const newBookingRef = push(ref(database, 'bookings'));
-                await set(newBookingRef, booking);
-                
-                alert(`✅ Booking confirmed!\n\n👤 ${memberName}\n🚣 ${equipment}\n📅 ${selectedDate}\n🕐 ${selectedTimeSlot}`);
-                
-                document.getElementById('bookingModal').style.display = 'none';
-            } catch (error) {
-                console.error('Error creating booking:', error);
-                alert('❌ Error creating booking. Please try again.');
+ 
+        // ── BOOKER TYPE BUTTONS ────────────────────────────────
+        document.getElementById('btnMember').addEventListener('click', () => {
+            bookerType             = 'member';
+            memberPasswordVerified = false;
+            selectedTimeSlot       = null;
+ 
+            document.getElementById('btnMember').classList.add('selected-member');
+            document.getElementById('btnNonMember').classList.remove('selected-nonmember');
+ 
+            resetModalSections();
+            document.getElementById('passwordSection').style.display = 'block';
+            document.getElementById('memberPassword').focus();
+        });
+ 
+        document.getElementById('btnNonMember').addEventListener('click', () => {
+            bookerType             = 'nonmember';
+            memberPasswordVerified = false;
+            selectedTimeSlot       = null;
+ 
+            document.getElementById('btnNonMember').classList.add('selected-nonmember');
+            document.getElementById('btnMember').classList.remove('selected-member');
+ 
+            resetModalSections();
+            document.getElementById('nonMemberSection').style.display  = 'block';
+            document.getElementById('ntuContactSection').style.display = 'block';
+            document.getElementById('ntuName').focus();
+        });
+ 
+        // ── PASSWORD VERIFY ────────────────────────────────────
+        document.getElementById('verifyPasswordBtn').addEventListener('click', verifyPassword);
+        document.getElementById('memberPassword').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); verifyPassword(); }
+        });
+ 
+        function verifyPassword() {
+            const entered = document.getElementById('memberPassword').value;
+            if (entered === MEMBER_PASSWORD) {
+                memberPasswordVerified = true;
+                document.getElementById('passwordError').style.display   = 'none';
+                document.getElementById('passwordSection').style.display = 'none';
+                document.getElementById('memberSection').style.display   = 'block';
+                populateEquipmentDropdown('member');
+                document.getElementById('equipmentSection').style.display = 'block';
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
+                document.getElementById('memberPassword').value         = '';
+                document.getElementById('memberPassword').focus();
             }
         }
-
-        // ============================================
-        // INITIALIZE
-        // ============================================
-
-        setupEventListeners();
+ 
+        // ── GUEST CONTACT LIVE VALIDATION ──────────────────────
+        document.getElementById('ntuName').addEventListener('input', () => {
+            const val = document.getElementById('ntuName').value.trim();
+            if (val.length > 0) {
+                document.getElementById('ntuNameError').style.display = 'none';
+                document.getElementById('ntuName').classList.remove('input-error');
+                if (document.getElementById('ntuPhone').value.trim().length >= 8) {
+                    populateEquipmentDropdown('nonmember');
+                    document.getElementById('equipmentSection').style.display = 'block';
+                }
+            } else {
+                document.getElementById('equipmentSection').style.display   = 'none';
+                document.getElementById('timeSlotSection').style.display    = 'none';
+                document.getElementById('paymentSlipSection').style.display = 'none';
+                document.getElementById('indemnitySection').style.display   = 'none';
+                selectedTimeSlot = null;
+            }
+        });
+ 
+        document.getElementById('ntuPhone').addEventListener('input', () => {
+            const val = document.getElementById('ntuPhone').value.trim();
+            if (val.length >= 8) {
+                document.getElementById('ntuPhoneError').style.display = 'none';
+                document.getElementById('ntuPhone').classList.remove('input-error');
+                if (document.getElementById('ntuName').value.trim().length > 0) {
+                    populateEquipmentDropdown('nonmember');
+                    document.getElementById('equipmentSection').style.display = 'block';
+                }
+            } else {
+                document.getElementById('equipmentSection').style.display   = 'none';
+                document.getElementById('timeSlotSection').style.display    = 'none';
+                document.getElementById('paymentSlipSection').style.display = 'none';
+                document.getElementById('indemnitySection').style.display   = 'none';
+                selectedTimeSlot = null;
+            }
+        });
+ 
+        // ── EQUIPMENT DROPDOWN ─────────────────────────────────
+        function populateEquipmentDropdown(type) {
+            const equipmentChoice     = document.getElementById('equipmentChoice');
+            equipmentChoice.innerHTML = '<option value="">Choose equipment...</option>';
+            const list  = type === 'member' ? MEMBER_EQUIPMENT : NONMEMBER_EQUIPMENT;
+            const icons = {
+                'OC1.1':'🛶','OC1.2':'🛶',
+                'T1.1':'🚣','T1.2':'🚣','T1.3':'🚣','T1.4':'🚣','T1.5':'🚣',
+                'K1.1':'🛶','K1.2':'🛶'
+            };
+            list.forEach(eq => {
+                const option       = document.createElement('option');
+                option.value       = eq;
+                option.textContent = `${icons[eq] || ''} ${eq}`;
+                equipmentChoice.appendChild(option);
+            });
+            // BUG 3 & 4 FIX
+            selectedTimeSlot = null;
+            document.getElementById('timeSlotSection').style.display    = 'none';
+            document.getElementById('paymentSlipSection').style.display = 'none';
+            document.getElementById('indemnitySection').style.display   = 'none';
+        }
+ 
+        document.getElementById('equipmentChoice').addEventListener('change', () => {
+            const eq     = document.getElementById('equipmentChoice').value;
+            selectedTimeSlot = null; // BUG 4 FIX
+ 
+            if (eq) {
+                renderTimeSlots(eq);
+                document.getElementById('timeSlotSection').style.display = 'block';
+                if (bookerType === 'nonmember') {
+                    document.getElementById('paymentSlipSection').style.display = 'block';
+                    document.getElementById('indemnitySection').style.display   = 'block';
+                }
+            } else {
+                document.getElementById('timeSlotSection').style.display    = 'none';
+                document.getElementById('paymentSlipSection').style.display = 'none';
+                document.getElementById('indemnitySection').style.display   = 'none';
+            }
+        });
+ 
+        // ── TIME SLOTS ─────────────────────────────────────────
+        function renderTimeSlots(equipment) {
+            const container     = document.getElementById('timeSlots');
+            container.innerHTML = '';
+ 
+            const bookedSlots = bookings
+                .filter(b => {
+                    const bd = `${b.date.getFullYear()}-${String(b.date.getMonth()+1).padStart(2,'0')}-${String(b.date.getDate()).padStart(2,'0')}`;
+                    return bd === selectedDate && b.equipment === equipment;
+                })
+                .map(b => b.timeSlot);
+ 
+            timeSlots.forEach(slot => {
+                const div       = document.createElement('div');
+                div.className   = 'time-slot';
+                div.textContent = slot;
+ 
+                if (bookedSlots.includes(slot)) {
+                    div.classList.add('booked');
+                } else {
+                    div.addEventListener('click', () => {
+                        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                        div.classList.add('selected');
+                        selectedTimeSlot = slot;
+                    });
+                }
+                container.appendChild(div);
+            });
+        }
+ 
+        // ── PAYMENT SLIP PREVIEW ───────────────────────────────
+        document.getElementById('paymentSlipFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader  = new FileReader();
+                reader.onload = (ev) => {
+                    document.getElementById('previewImage').src            = ev.target.result;
+                    document.getElementById('uploadPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+                document.getElementById('uploadStatus').textContent = `📎 ${file.name} selected`;
+            }
+        });
+ 
+        // ── INDEMNITY CHECKBOX ─────────────────────────────────
+        document.getElementById('indemnityCheckbox').addEventListener('change', (e) => {
+            const box = document.getElementById('indemnityAgreeBox');
+            e.target.checked
+                ? box.classList.add('checked')
+                : box.classList.remove('checked');
+        });
+ 
+        // ── CALENDAR NAVIGATION ────────────────────────────────
+        document.getElementById('equipmentSelect').addEventListener('change', () => {
+            selectedEquipment = document.getElementById('equipmentSelect').value;
+            renderCalendar();
+        });
+ 
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        });
+ 
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            renderCalendar();
+        });
+ 
+        // ── FORM SUBMIT ────────────────────────────────────────
+        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+ 
+            // BUG 7 FIX: prevent double submit
+            if (isSubmitting) return;
+ 
+            if (!bookerType) {
+                alert('⚠️ Please select Member or Guest.');
+                return;
+            }
+ 
+            if (bookerType === 'member') {
+                if (!memberPasswordVerified) {
+                    alert('⚠️ Please verify your member password.');
+                    return;
+                }
+                if (!document.getElementById('memberSelect').value) {
+                    alert('⚠️ Please select your name.');
+                    return;
+                }
+            }
+ 
+            if (bookerType === 'nonmember') {
+                let hasError   = false;
+                const ntuName  = document.getElementById('ntuName').value.trim();
+                const ntuPhone = document.getElementById('ntuPhone').value.trim();
+ 
+                if (!ntuName) {
+                    document.getElementById('ntuNameError').style.display = 'block';
+                    document.getElementById('ntuName').classList.add('input-error');
+                    document.getElementById('ntuName').focus();
+                    hasError = true;
+                }
+                if (!ntuPhone || ntuPhone.length < 8) {
+                    document.getElementById('ntuPhoneError').style.display = 'block';
+                    document.getElementById('ntuPhone').classList.add('input-error');
+                    if (!hasError) document.getElementById('ntuPhone').focus();
+                    hasError = true;
+                }
+                if (hasError) {
+                    document.getElementById('ntuContactSection').scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+            }
+ 
+            const equipment = document.getElementById('equipmentChoice').value;
+            if (!equipment) {
+                alert('⚠️ Please select equipment.');
+                return;
+            }
+            if (!selectedTimeSlot) {
+                alert('⚠️ Please select a time slot.');
+                return;
+            }
+ 
+            if (bookerType === 'nonmember') {
+                const file = document.getElementById('paymentSlipFile').files[0];
+                if (!file) {
+                    alert('⚠️ Payment slip is required. Please upload your payment slip.');
+                    document.getElementById('paymentSlipSection').scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+                if (!document.getElementById('indemnityCheckbox').checked) {
+                    alert('⚠️ You must read and agree to the Indemnity & Waiver Form before booking.');
+                    document.getElementById('indemnitySection').scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+ 
+                try {
+                    isSubmitting = true;
+                    document.querySelector('.btn-primary').disabled           = true;
+                    document.getElementById('uploadingSpinner').style.display = 'block';
+                    document.getElementById('uploadStatus').textContent       = '⏳ Uploading payment slip...';
+ 
+                    const fileName = `paymentSlips/${selectedDate}_${Date.now()}_${file.name}`;
+                    const slipRef  = storageRef(storage, fileName);
+                    await uploadBytes(slipRef, file);
+                    paymentSlipURL = await getDownloadURL(slipRef);
+ 
+                    document.getElementById('uploadingSpinner').style.display = 'none';
+                    document.getElementById('uploadStatus').textContent       = '✅ Payment slip uploaded!';
+                } catch (error) {
+                    isSubmitting = false;
+                    document.getElementById('uploadingSpinner').style.display = 'none';
+                    document.querySelector('.btn-primary').disabled           = false;
+                    console.error('Upload error:', error);
+                    alert('❌ Failed to upload payment slip. Please try again.');
+                    return;
+                }
+            } else {
+                isSubmitting = true;
+                document.querySelector('.btn-primary').disabled = true;
+            }
+ 
+            // BUG 2 FIX: safe fallback for memberName
+            const ntuName  = bookerType === 'nonmember' ? document.getElementById('ntuName').value.trim()  : null;
+            const ntuPhone = bookerType === 'nonmember' ? document.getElementById('ntuPhone').value.trim() : null;
+            const memberName = bookerType === 'member'
+                ? (document.getElementById('memberSelect').value || 'Unknown Member')
+                : (ntuName || 'Unknown Guest');
+ 
+            const bookingData = {
+                memberName:  memberName,
+                bookerType:  bookerType,
+                equipment:   equipment,
+                dateString:  selectedDate,
+                timeSlot:    selectedTimeSlot,
+                createdAt:   Date.now()
+            };
+ 
+            if (bookerType === 'nonmember') {
+                bookingData.guestName         = ntuName;
+                bookingData.guestPhone        = ntuPhone;
+                bookingData.paymentSlipURL    = paymentSlipURL || null;
+                bookingData.indemnityAgreed   = true;
+                bookingData.indemnityAgreedAt = Date.now();
+            }
+ 
+            try {
+                const newBookingRef = push(ref(database, 'bookings'));
+                await set(newBookingRef, bookingData);
+ 
+                let emailSent = false;
+                if (bookerType === 'nonmember') {
+                    document.getElementById('uploadingSpinner').style.display = 'block';
+                    document.getElementById('uploadStatus').textContent       = '📧 Sending notification...';
+ 
+                    emailSent = await sendGuestBookingEmail({
+                        guestName:      ntuName,
+                        guestPhone:     ntuPhone,
+                        equipment:      equipment,
+                        dateString:     selectedDate,
+                        timeSlot:       selectedTimeSlot,
+                        paymentSlipURL: paymentSlipURL
+                    });
+ 
+                    document.getElementById('uploadingSpinner').style.display = 'none';
+                    document.getElementById('uploadStatus').textContent       = emailSent
+                        ? '✅ Notification sent!'
+                        : '⚠️ Booking saved but email notification failed.';
+                }
+ 
+                const dateObj   = new Date(selectedDate + 'T00:00:00');
+                const formatted = dateObj.toLocaleDateString('en-US', {
+                    weekday: 'long', month: 'long', day: 'numeric'
+                });
+ 
+                const guestDetails = bookerType === 'nonmember'
+                    ? `\n📞 Phone: ${ntuPhone}\n✅ Indemnity Agreed\n📧 ${emailSent ? 'Notification sent' : 'Email notification failed'}`
+                    : '';
+ 
+                alert(`✅ Booking confirmed!\n\n👤 ${memberName}\n🚣 ${equipment}\n📅 ${formatted}\n🕐 ${selectedTimeSlot}${guestDetails}`);
+ 
+                // BUG 1 FIX: full state reset instead of form.reset()
+                document.getElementById('bookingModal').style.display = 'none';
+                selectedDate           = null;
+                selectedTimeSlot       = null;
+                bookerType             = null;
+                memberPasswordVerified = false;
+                paymentSlipURL         = null;
+                isSubmitting           = false;
+                document.querySelector('.btn-primary').disabled = false;
+ 
+            } catch (error) {
+                isSubmitting = false;
+                document.querySelector('.btn-primary').disabled = false;
+                console.error('Booking error:', error);
+                alert('❌ Error saving booking. Please try again.');
+            }
+        });
+ 
+        // ── INITIAL RENDER ─────────────────────────────────────
         renderCalendar();
+ 
     </script>
 </body>
 </html>
+
+ 
+
+Micron Confidential
