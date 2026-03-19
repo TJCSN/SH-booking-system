@@ -1363,8 +1363,8 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            if (file.size > 2 * 1024 * 1024) {
-                alert('⚠️ File too large. Please upload an image under 2MB.');
+            if (file.size > 10 * 1024 * 1024) {
+                alert('⚠️ File too large. Please upload an image under 10MB.');
                 e.target.value = '';
                 return;
             }
@@ -1386,21 +1386,52 @@
             paymentSlipURL        = null;
 
             try {
-                // Convert image to Base64 and store in Realtime Database
                 const reader = new FileReader();
                 reader.onload = (ev) => {
-                    const base64Data = ev.target.result;
+                    // Compress image using canvas
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
 
-                    // Show preview
-                    previewImg.src         = base64Data;
-                    preview.style.display  = 'block';
+                        // Resize to max 800px wide
+                        let width  = img.width;
+                        let height = img.height;
+                        const MAX  = 800;
 
-                    // Store base64 as the paymentSlipURL
-                    paymentSlipURL = base64Data;
+                        if (width > MAX) {
+                            height = Math.round((height * MAX) / width);
+                            width  = MAX;
+                        }
 
-                    statusEl.textContent = '✅ Payment slip ready!';
-                    statusEl.style.color = '#28a745';
-                    spinner.style.display = 'none';
+                        canvas.width  = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Compress to JPEG at 60% quality
+                        const compressed = canvas.toDataURL('image/jpeg', 0.6);
+
+                        // Show preview
+                        previewImg.src        = compressed;
+                        preview.style.display = 'block';
+
+                        // Store compressed base64
+                        paymentSlipURL = compressed;
+
+                        const sizeKB = Math.round((compressed.length * 3) / 4 / 1024);
+                        statusEl.textContent = `✅ Payment slip ready! (${sizeKB}KB)`;
+                        statusEl.style.color  = '#28a745';
+                        spinner.style.display = 'none';
+                    };
+
+                    img.onerror = () => {
+                        statusEl.textContent  = '❌ Failed to process image. Please try again.';
+                        statusEl.style.color  = '#dc3545';
+                        spinner.style.display = 'none';
+                    };
+
+                    img.src = ev.target.result;
                 };
 
                 reader.onerror = () => {
