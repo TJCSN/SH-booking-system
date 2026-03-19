@@ -1363,32 +1363,58 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            const preview = document.getElementById('uploadPreview');
-            const previewImg = document.getElementById('previewImage');
-            const statusEl = document.getElementById('uploadStatus');
-            const spinner  = document.getElementById('uploadingSpinner');
+            if (file.size > 2 * 1024 * 1024) {
+                alert('⚠️ File too large. Please upload an image under 2MB.');
+                e.target.value = '';
+                return;
+            }
 
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                previewImg.src = ev.target.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+            if (!file.type.startsWith('image/')) {
+                alert('⚠️ Please upload an image file (JPG, PNG, etc.)');
+                e.target.value = '';
+                return;
+            }
+
+            const preview    = document.getElementById('uploadPreview');
+            const previewImg = document.getElementById('previewImage');
+            const statusEl   = document.getElementById('uploadStatus');
+            const spinner    = document.getElementById('uploadingSpinner');
+
+            spinner.style.display = 'block';
+            statusEl.textContent  = '⏳ Processing payment slip...';
+            statusEl.style.color  = '#E65100';
+            paymentSlipURL        = null;
 
             try {
-                spinner.style.display = 'block';
-                statusEl.textContent = '';
-                const fileRef = storageRef(storage, `payment_slips/${Date.now()}_${file.name}`);
-                await uploadBytes(fileRef, file);
-                paymentSlipURL = await getDownloadURL(fileRef);
-                statusEl.textContent = '✅ Payment slip uploaded successfully!';
-                statusEl.style.color = '#28a745';
+                // Convert image to Base64 and store in Realtime Database
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const base64Data = ev.target.result;
+
+                    // Show preview
+                    previewImg.src         = base64Data;
+                    preview.style.display  = 'block';
+
+                    // Store base64 as the paymentSlipURL
+                    paymentSlipURL = base64Data;
+
+                    statusEl.textContent = '✅ Payment slip ready!';
+                    statusEl.style.color = '#28a745';
+                    spinner.style.display = 'none';
+                };
+
+                reader.onerror = () => {
+                    statusEl.textContent  = '❌ Failed to read file. Please try again.';
+                    statusEl.style.color  = '#dc3545';
+                    spinner.style.display = 'none';
+                };
+
+                reader.readAsDataURL(file);
+
             } catch (err) {
                 console.error('Upload error:', err);
-                statusEl.textContent = '❌ Upload failed. Please try again.';
-                statusEl.style.color = '#dc3545';
-                paymentSlipURL = null;
-            } finally {
+                statusEl.textContent  = '❌ Failed. Please try again.';
+                statusEl.style.color  = '#dc3545';
                 spinner.style.display = 'none';
             }
         });
