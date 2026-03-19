@@ -552,18 +552,18 @@
         .time-slots {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 8px;
             margin-top: 15px;
         }
 
         .time-slot {
-            padding: 15px 10px;
+            padding: 12px 8px;
             border: 3px solid #ddd;
             border-radius: 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             background-color: white;
             touch-action: manipulation;
@@ -722,7 +722,7 @@
             .calendar thead th { font-size: 14px; padding: 14px 5px; }
             .calendar tbody td { height: 150px !important; min-height: 150px !important; }
             .day-number { font-size: 15px; }
-            .time-slots { grid-template-columns: repeat(3, 1fr); }
+            .time-slots { grid-template-columns: repeat(4, 1fr); }
             .form-actions { grid-template-columns: 1fr 1fr; }
             .legend-items { grid-template-columns: repeat(2, 1fr); }
         }
@@ -731,7 +731,7 @@
             .calendar tbody td { height: 170px !important; min-height: 170px !important; }
             .day-number { font-size: 16px; }
             .booking-overview { font-size: 11px; }
-            .time-slots { grid-template-columns: repeat(4, 1fr); }
+            .time-slots { grid-template-columns: repeat(6, 1fr); }
             .legend-items { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
@@ -1353,6 +1353,9 @@
                 }
                 timeSlotsEl.appendChild(div);
             });
+
+            // Ensure the section is visible
+            document.getElementById('timeSlotSection').style.display = 'block';
         }
 
         // ── PAYMENT SLIP UPLOAD ─────────────────────────────────────────────
