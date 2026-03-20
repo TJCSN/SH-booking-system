@@ -1,22 +1,20 @@
-
- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Equipment Booking System</title>
- 
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
- 
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
- 
+
         .login-container {
             max-width: 400px;
             margin: 100px auto;
@@ -25,955 +23,651 @@
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
- 
+
         .login-container h1 { text-align: center; color: #333; margin-bottom: 30px; font-size: 28px; }
- 
+
         .login-container input {
             width: 100%; padding: 15px; margin-bottom: 20px;
             border: 2px solid #ddd; border-radius: 8px; font-size: 16px;
         }
- 
+
         .login-container input:focus { outline: none; border-color: #667eea; }
- 
+
         .login-container button {
             width: 100%; padding: 15px; background: #667eea; color: white;
             border: none; border-radius: 8px; font-size: 18px; font-weight: bold;
             cursor: pointer; transition: background 0.3s;
         }
- 
+
         .login-container button:hover { background: #5568d3; }
- 
+
         .admin-container { display: none; max-width: 1400px; margin: 0 auto; }
- 
+
         .admin-header {
             background: white; padding: 20px 30px; border-radius: 15px;
             margin-bottom: 20px; display: flex; justify-content: space-between;
             align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
- 
+
         .admin-header h1 { color: #333; font-size: 28px; }
- 
+
         .logout-btn {
             padding: 12px 25px; background: #dc3545; color: white; border: none;
             border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;
         }
- 
+
         .logout-btn:hover { background: #c82333; }
- 
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px; margin-bottom: 20px;
         }
- 
+
         .stat-card {
             background: white; padding: 25px; border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
         }
- 
+
         .stat-card h3 { color: #666; font-size: 14px; text-transform: uppercase; margin-bottom: 10px; }
         .stat-card .stat-number { font-size: 42px; font-weight: bold; color: #667eea; }
         .stat-card.stat-member .stat-number    { color: #1565C0; }
         .stat-card.stat-nonmember .stat-number { color: #E65100; }
- 
+
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
- 
+
         .tab-btn {
             flex: 1; padding: 15px; background: white; border: none; border-radius: 10px;
             font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
- 
+
         .tab-btn.active { background: #667eea; color: white; }
- 
+
         .tab-content { display: none; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .tab-content.active { display: block; }
- 
+
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .section-header h2 { color: #333; font-size: 24px; }
- 
+
         .add-btn {
             padding: 12px 25px; background: #28a745; color: white; border: none;
             border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;
         }
- 
+
         .add-btn:hover { background: #218838; }
- 
+
         .member-list, .booking-list { display: grid; gap: 15px; }
- 
+
         .member-item, .booking-item {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #667eea;
         }
- 
+
         .booking-item.booking-member    { border-left-color: #1565C0; background: #F8FBFF; }
         .booking-item.booking-nonmember { border-left-color: #E65100; background: #FFFAF5; }
- 
+
         .member-info, .booking-info { flex: 1; }
         .member-name { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 5px; }
         .member-meta { font-size: 14px; color: #666; }
- 
+
         .booking-type-tag {
             display: inline-block; padding: 3px 10px; border-radius: 12px;
             font-size: 13px; font-weight: bold; margin-bottom: 8px; margin-right: 5px;
         }
- 
+
         .tag-member    { background: #BBDEFB; color: #1565C0; }
         .tag-nonmember { background: #FFE0B2; color: #E65100; }
- 
+
         .booking-details {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 10px; margin-top: 10px;
         }
- 
+
         .booking-detail { font-size: 14px; color: #666; }
         .booking-detail strong { color: #333; }
- 
-        /* Guest contact info */
+
         .guest-contact-section {
             margin-top: 10px; padding: 10px 14px;
             background: #FFF3E0; border-radius: 8px;
             border: 1px solid #FFCC80; font-size: 14px; color: #E65100;
         }
- 
+
         .guest-contact-section strong { color: #BF360C; }
- 
-        /* Indemnity badge */
+
         .indemnity-badge {
             display: inline-block; padding: 3px 10px; border-radius: 6px;
             font-size: 12px; font-weight: bold; margin-top: 6px;
         }
- 
+
         .indemnity-agreed  { background: #d4edda; color: #155724; }
         .indemnity-missing { background: #f8d7da; color: #721c24; }
- 
-        /* Payment slip styles */
+
         .payment-slip-section {
             margin-top: 12px; padding: 12px; background: #FFF8E1;
             border-radius: 8px; border: 1px solid #FFB300;
         }
- 
+
         .payment-slip-section h4 { color: #E65100; margin-bottom: 10px; font-size: 14px; }
- 
+
         .slip-thumbnail {
             width: 100px; height: 80px; object-fit: cover;
             border-radius: 6px; border: 2px solid #FFB300;
             cursor: pointer; transition: transform 0.2s;
         }
- 
+
         .slip-thumbnail:hover { transform: scale(1.05); }
- 
+
         .slip-actions { display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
- 
+
         .view-slip-btn, .download-slip-btn {
             padding: 8px 15px; border: none; border-radius: 6px;
             font-size: 13px; font-weight: bold; cursor: pointer; text-decoration: none;
             display: inline-block;
         }
- 
-        .view-slip-btn     { background: #1976D2; color: white; }
+
+        .view-slip-btn      { background: #1976D2; color: white; }
         .view-slip-btn:hover { background: #1565C0; }
-        .download-slip-btn { background: #28a745; color: white; }
+        .download-slip-btn  { background: #28a745; color: white; }
         .download-slip-btn:hover { background: #218838; }
- 
-        /* Image lightbox */
+
         .lightbox {
             display: none; position: fixed; z-index: 9999; left: 0; top: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
             justify-content: center; align-items: center;
         }
- 
+
         .lightbox.active { display: flex; }
- 
+
         .lightbox img {
             max-width: 90%; max-height: 90vh; border-radius: 8px;
             box-shadow: 0 4px 30px rgba(0,0,0,0.5);
         }
- 
+
         .lightbox-close {
             position: absolute; top: 20px; right: 30px; color: white;
             font-size: 40px; cursor: pointer; font-weight: bold;
         }
- 
+
         .delete-btn {
             padding: 10px 20px; background: #dc3545; color: white; border: none;
             border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer;
             margin-left: 10px; flex-shrink: 0;
         }
- 
+
         .delete-btn:hover { background: #c82333; }
- 
+
         .modal {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0;
             width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); overflow-y: auto;
         }
- 
+
         .modal-content {
             background-color: white; margin: 50px auto; padding: 30px;
             border-radius: 15px; width: 90%; max-width: 500px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
- 
+
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-header h2 { color: #333; font-size: 24px; }
- 
+
         .close {
             font-size: 35px; font-weight: bold; color: #aaa; cursor: pointer;
             border: none; background: none; padding: 0; width: 40px; height: 40px;
             display: flex; align-items: center; justify-content: center; border-radius: 50%;
         }
- 
+
         .close:hover { background-color: #f0f0f0; }
- 
+
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; font-size: 16px; }
         .form-group input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
         .form-group input:focus { outline: none; border-color: #667eea; }
- 
+
         .form-actions { display: flex; gap: 10px; margin-top: 25px; }
- 
+
         .btn-primary {
             flex: 1; padding: 15px; background: #667eea; color: white; border: none;
             border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;
         }
- 
+
         .btn-primary:hover { background: #5568d3; }
- 
+
         .btn-secondary {
             flex: 1; padding: 15px; background: #6c757d; color: white; border: none;
             border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;
         }
- 
+
         .btn-secondary:hover { background: #5a6268; }
- 
+
         .empty-state { text-align: center; padding: 60px 20px; color: #999; }
-        .empty-state-icon { font-size: 64px; margin-bottom: 20px; }
-        .empty-state-text { font-size: 18px; }
- 
-        .sync-indicator {
-            position: fixed; bottom: 20px; right: 20px; padding: 12px 20px;
-            background: #28a745; color: white; border-radius: 8px; font-weight: bold;
-            box-shadow: 0 4px 15px rgba(40,167,69,0.4); z-index: 999;
+        .empty-state h3 { font-size: 24px; margin-bottom: 10px; }
+
+        .filter-bar {
+            display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
         }
- 
-        .sync-indicator.offline { background: #dc3545; }
- 
-        .active-users {
-            background: white; padding: 20px; border-radius: 15px;
-            margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+        .filter-bar select, .filter-bar input {
+            padding: 10px 15px; border: 2px solid #ddd; border-radius: 8px;
+            font-size: 14px; background: white;
         }
- 
-        .active-users h3 { color: #333; margin-bottom: 15px; font-size: 18px; }
-        .user-badges { display: flex; gap: 10px; flex-wrap: wrap; }
- 
-        .user-badge {
-            padding: 8px 15px; background: #e3f2fd; color: #1976d2;
-            border-radius: 20px; font-size: 14px; font-weight: bold;
-        }
- 
-        .filter-section {
-            margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
-        }
- 
-        .filter-section select,
-        .filter-section input {
-            padding: 10px 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;
-        }
- 
-        .filter-section select:focus,
-        .filter-section input:focus { outline: none; border-color: #667eea; }
- 
-        .filter-label { font-weight: bold; color: #333; font-size: 14px; }
- 
-        .export-btn {
-            padding: 10px 20px; background: #17a2b8; color: white; border: none;
-            border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer;
-            margin-left: auto;
-        }
- 
-        .export-btn:hover { background: #138496; }
- 
-        .no-slip-badge {
-            display: inline-block; padding: 4px 10px; background: #f8d7da;
-            color: #721c24; border-radius: 6px; font-size: 12px; font-weight: bold;
-        }
- 
-        @media (max-width: 768px) {
-            .admin-header { flex-direction: column; gap: 15px; text-align: center; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .tabs { flex-direction: column; }
-            .booking-details { grid-template-columns: 1fr; }
-            .member-item,
-            .booking-item { flex-direction: column; gap: 15px; align-items: flex-start; }
-            .form-actions { flex-direction: column; }
-            .slip-actions { flex-direction: column; align-items: flex-start; }
+
+        .filter-bar select:focus, .filter-bar input:focus {
+            outline: none; border-color: #667eea;
         }
     </style>
 </head>
 <body>
- 
-    <!-- Login Screen -->
-    <div class="login-container" id="loginContainer">
-        <h1>🔐 Admin Login</h1>
-        <form id="loginForm">
-            <input type="password" id="adminPassword" placeholder="Enter admin password" required>
-            <button type="submit">Login</button>
-        </form>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+    <span class="lightbox-close" id="lightboxClose">&times;</span>
+    <img id="lightboxImg" src="" alt="Payment Slip">
+</div>
+
+<!-- Login -->
+<div class="login-container" id="loginContainer">
+    <h1>🔐 Admin Login</h1>
+    <input type="password" id="adminPassword" placeholder="Enter admin password..." />
+    <button onclick="adminLogin()">Login</button>
+    <div id="loginError" style="color:#dc3545;margin-top:10px;text-align:center;display:none;">
+        ❌ Incorrect password.
     </div>
- 
-    <!-- Admin Panel -->
-    <div class="admin-container" id="adminContainer">
-        <div class="admin-header">
-            <h1>⚙️ Admin Panel - Equipment Booking System</h1>
-            <button class="logout-btn" id="logoutBtn">Logout</button>
+</div>
+
+<!-- Admin Panel -->
+<div class="admin-container" id="adminContainer">
+    <div class="admin-header">
+        <h1>⚙️ Admin Panel</h1>
+        <button class="logout-btn" onclick="adminLogout()">🚪 Logout</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Bookings</h3>
+            <div class="stat-number" id="statTotal">0</div>
         </div>
- 
-        <!-- Active Users -->
-        <div class="active-users">
-            <h3>👥 Active Users Right Now</h3>
-            <div class="user-badges" id="activeUsersList">
-                <div class="user-badge">Loading...</div>
-            </div>
+        <div class="stat-card stat-member">
+            <h3>Member Bookings</h3>
+            <div class="stat-number" id="statMember">0</div>
         </div>
- 
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Total Members</h3>
-                <div class="stat-number" id="totalMembers">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Total Bookings</h3>
-                <div class="stat-number" id="totalBookings">0</div>
-            </div>
-            <div class="stat-card stat-member">
-                <h3>Member Bookings</h3>
-                <div class="stat-number" id="memberBookings">0</div>
-            </div>
-            <div class="stat-card stat-nonmember">
-                <h3>Guest Bookings</h3>
-                <div class="stat-number" id="nonMemberBookings">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>This Month</h3>
-                <div class="stat-number" id="monthBookings">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Today</h3>
-                <div class="stat-number" id="todayBookings">0</div>
-            </div>
+        <div class="stat-card stat-nonmember">
+            <h3>Guest Bookings</h3>
+            <div class="stat-number" id="statGuest">0</div>
         </div>
- 
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="members">👥 Manage Members</button>
-            <button class="tab-btn" data-tab="bookings">📅 All Bookings</button>
-            <button class="tab-btn" data-tab="nonmember">🎫 Guest Bookings</button>
-        </div>
- 
-        <!-- Members Tab -->
-        <div class="tab-content active" id="membersTab">
-            <div class="section-header">
-                <h2>Registered Members</h2>
-                <button class="add-btn" id="addMemberBtn">+ Add Member</button>
-            </div>
-            <div class="member-list" id="memberList"></div>
-        </div>
- 
-        <!-- All Bookings Tab -->
-        <div class="tab-content" id="bookingsTab">
-            <div class="section-header">
-                <h2>All Bookings</h2>
-            </div>
-            <div class="filter-section">
-                <span class="filter-label">Filter:</span>
-                <select id="filterEquipment">
-                    <option value="">All Equipment</option>
-                    <option value="OC1.1">OC1.1</option>
-                    <option value="OC1.2">OC1.2</option>
-                    <option value="T1.1">T1.1</option>
-                    <option value="T1.2">T1.2</option>
-                    <option value="T1.3">T1.3</option>
-                    <option value="T1.4">T1.4</option>
-                    <option value="T1.5">T1.5</option>
-                    <option value="K1.1">K1.1</option>
-                    <option value="K1.2">K1.2</option>
-                </select>
-                <input type="date" id="filterDate">
-                <select id="filterMember">
-                    <option value="">All Bookers</option>
-                </select>
-                <select id="filterBookerType">
-                    <option value="">All Types</option>
-                    <option value="member">Members Only</option>
-                    <option value="nonmember">Guests Only</option>
-                </select>
-                <button class="export-btn" id="exportCSVBtn">📥 Export CSV</button>
-            </div>
-            <div class="booking-list" id="bookingList"></div>
-        </div>
- 
-        <!-- Guest Bookings Tab -->
-        <div class="tab-content" id="nonmemberTab">
-            <div class="section-header">
-                <h2>🎫 Guest Bookings &amp; Payment Slips</h2>
-            </div>
-            <div class="filter-section">
-                <span class="filter-label">Filter:</span>
-                <input type="date" id="nmFilterDate">
-                <select id="nmFilterEquipment">
-                    <option value="">All Equipment</option>
-                    <option value="T1.1">T1.1</option>
-                    <option value="T1.2">T1.2</option>
-                    <option value="T1.3">T1.3</option>
-                    <option value="T1.4">T1.4</option>
-                    <option value="T1.5">T1.5</option>
-                    <option value="K1.1">K1.1</option>
-                    <option value="K1.2">K1.2</option>
-                </select>
-                <select id="nmFilterSlip">
-                    <option value="">All (Slip Status)</option>
-                    <option value="uploaded">✅ Slip Uploaded</option>
-                    <option value="missing">⚠️ No Slip</option>
-                </select>
-                <select id="nmFilterIndemnity">
-                    <option value="">All (Indemnity)</option>
-                    <option value="agreed">✅ Agreed</option>
-                    <option value="missing">⚠️ Not Agreed</option>
-                </select>
-            </div>
-            <div class="booking-list" id="nonMemberBookingList"></div>
+        <div class="stat-card">
+            <h3>Total Members</h3>
+            <div class="stat-number" id="statMembers">0</div>
         </div>
     </div>
- 
-    <!-- Add Member Modal -->
-    <div id="addMemberModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add New Member</h2>
-                <button class="close" id="closeAddMember">&times;</button>
-            </div>
-            <form id="addMemberForm">
-                <div class="form-group">
-                    <label for="memberName">Member Name:</label>
-                    <input type="text" id="memberName" placeholder="Enter full name" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn-primary">Add Member</button>
-                    <button type="button" class="btn-secondary" id="cancelAddMember">Cancel</button>
-                </div>
-            </form>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('bookings')">📅 Bookings</button>
+        <button class="tab-btn" onclick="switchTab('members')">👥 Members</button>
+    </div>
+
+    <!-- Bookings Tab -->
+    <div class="tab-content active" id="tab-bookings">
+        <div class="section-header">
+            <h2>📅 All Bookings</h2>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar">
+            <select id="filterType">
+                <option value="">All Types</option>
+                <option value="member">Member</option>
+                <option value="nonmember">Guest</option>
+            </select>
+            <select id="filterEquipment">
+                <option value="">All Equipment</option>
+                <option value="OC1.1">OC1.1</option>
+                <option value="OC1.2">OC1.2</option>
+                <option value="T1.1">T1.1</option>
+                <option value="T1.2">T1.2</option>
+                <option value="T1.3">T1.3</option>
+                <option value="T1.4">T1.4</option>
+                <option value="T1.5">T1.5</option>
+                <option value="K1.1">K1.1</option>
+                <option value="K1.2">K1.2</option>
+            </select>
+            <input type="date" id="filterDate" placeholder="Filter by date">
+            <input type="text" id="filterName" placeholder="Search by name...">
+        </div>
+
+        <div class="booking-list" id="bookingList">
+            <div class="empty-state"><h3>Loading bookings...</h3></div>
         </div>
     </div>
- 
-    <!-- Image Lightbox -->
-    <div class="lightbox" id="lightbox">
-        <span class="lightbox-close" id="lightboxClose">&times;</span>
-        <img id="lightboxImg" src="" alt="Payment slip">
+
+    <!-- Members Tab -->
+    <div class="tab-content" id="tab-members">
+        <div class="section-header">
+            <h2>👥 Members</h2>
+            <button class="add-btn" onclick="openAddMemberModal()">+ Add Member</button>
+        </div>
+        <div class="member-list" id="memberList">
+            <div class="empty-state"><h3>Loading members...</h3></div>
+        </div>
     </div>
- 
-    <!-- Sync Indicator -->
-    <div class="sync-indicator" id="syncIndicator">✅ Connected</div>
- 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, set, push, remove, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
- 
-        // ── FIREBASE CONFIG ────────────────────────────────────
-        const firebaseConfig = {
-            apiKey:            "AIzaSyB06dbfHFYW-suHhYl1NJT1DUysFM5dED4",
-            authDomain:        "sh-booking-system.firebaseapp.com",
-            databaseURL:       "https://sh-booking-system-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId:         "sh-booking-system",
-            storageBucket:     "sh-booking-system.firebasestorage.app",
-            messagingSenderId: "874524623701",
-            appId:             "1:874524623701:web:091abbff8b4bd291ce65dc"
-        };
- 
-        const app      = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
- 
-        const ADMIN_PASSWORD = 'Tjcsn1983!';
- 
-        // ── ACTIVE USER TRACKING ───────────────────────────────
-        const sessionId   = 'admin_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        let activeUserRef = null;
- 
-        function startAdminSession() {
-            activeUserRef = ref(database, `activeUsers/${sessionId}`);
-            set(activeUserRef, { timestamp: Date.now(), page: 'admin' });
-            setInterval(() => {
-                if (activeUserRef) set(activeUserRef, { timestamp: Date.now(), page: 'admin' });
-            }, 10000);
-            window.addEventListener('beforeunload', () => {
-                if (activeUserRef) remove(activeUserRef);
-            });
+</div>
+
+<!-- Add Member Modal -->
+<div class="modal" id="addMemberModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>➕ Add Member</h2>
+            <button class="close" onclick="closeAddMemberModal()">&times;</button>
+        </div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="newMemberName" placeholder="Enter member name...">
+        </div>
+        <div class="form-actions">
+            <button class="btn-primary" onclick="addMember()">✅ Add Member</button>
+            <button class="btn-secondary" onclick="closeAddMemberModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp }                          from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getDatabase, ref, onValue, remove, push, set } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+    // ── BOOKING Firebase ────────────────────────────────────────────────────
+    const firebaseConfig = {
+        apiKey:            "AIzaSyDJhHhQSXD3gTOxUsMaJY0AhVZ8z7IVpp0",
+        authDomain:        "sh-booking-system-a4fa9.firebaseapp.com",
+        databaseURL:       "https://sh-booking-system-a4fa9-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId:         "sh-booking-system-a4fa9",
+        storageBucket:     "sh-booking-system-a4fa9.firebasestorage.app",
+        messagingSenderId: "204182426956",
+        appId:             "1:204182426956:web:79b9789b880dc32a4fabe9"
+    };
+
+    // ── MEMBERS Firebase ────────────────────────────────────────────────────
+    const membersFirebaseConfig = {
+        apiKey:            "AIzaSyB06dbfHFYW-suHhYl1NJT1DUysFM5dED4",
+        authDomain:        "sh-booking-system.firebaseapp.com",
+        databaseURL:       "https://sh-booking-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId:         "sh-booking-system",
+        storageBucket:     "sh-booking-system.firebasestorage.app",
+        messagingSenderId: "874524623701",
+        appId:             "1:874524623701:web:091abbff8b4bd291ce65dc"
+    };
+
+    const app        = initializeApp(firebaseConfig);
+    const membersApp = initializeApp(membersFirebaseConfig, 'membersApp');
+    const db         = getDatabase(app);
+    const membersDb  = getDatabase(membersApp);
+
+    const ADMIN_PASSWORD = "1234567";
+
+    let allBookings = {};
+    let allMembers  = {};
+
+    // ── LOGIN ───────────────────────────────────────────────────────────────
+    window.adminLogin = function() {
+        const pw = document.getElementById('adminPassword').value;
+        if (pw === ADMIN_PASSWORD) {
+            document.getElementById('loginContainer').style.display   = 'none';
+            document.getElementById('adminContainer').style.display   = 'block';
+            document.getElementById('loginError').style.display       = 'none';
+            startListeners();
+        } else {
+            document.getElementById('loginError').style.display = 'block';
         }
- 
-        onValue(ref(database, 'activeUsers'), (snapshot) => {
-            const data            = snapshot.val();
-            const activeUsersList = document.getElementById('activeUsersList');
-            if (data) {
-                const now          = Date.now();
-                const activeUsers  = Object.values(data).filter(u => (now - u.timestamp) < 30000);
-                const bookingUsers = activeUsers.filter(u => u.page === 'booking').length;
-                const adminUsers   = activeUsers.filter(u => u.page === 'admin').length;
-                activeUsersList.innerHTML = `
-                    <div class="user-badge">📱 ${bookingUsers} on Booking Page</div>
-                    <div class="user-badge">⚙️ ${adminUsers} on Admin Panel</div>
-                `;
-            } else {
-                activeUsersList.innerHTML = '<div class="user-badge">No active users</div>';
-            }
+    };
+
+    document.getElementById('adminPassword').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') window.adminLogin();
+    });
+
+    window.adminLogout = function() {
+        document.getElementById('loginContainer').style.display = 'block';
+        document.getElementById('adminContainer').style.display = 'none';
+        document.getElementById('adminPassword').value          = '';
+    };
+
+    // ── FIREBASE LISTENERS ──────────────────────────────────────────────────
+    function startListeners() {
+        // Bookings listener
+        onValue(ref(db, 'bookings'), (snapshot) => {
+            allBookings = snapshot.val() || {};
+            renderBookings();
+            updateStats();
         });
- 
-        // ── AUTHENTICATION ─────────────────────────────────────
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const password = document.getElementById('adminPassword').value;
-            if (password === ADMIN_PASSWORD) {
-                document.getElementById('loginContainer').style.display  = 'none';
-                document.getElementById('adminContainer').style.display  = 'block';
-                startAdminSession();
-            } else {
-                alert('❌ Incorrect password!');
-                document.getElementById('adminPassword').value = '';
-            }
-        });
- 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('Are you sure you want to logout?')) {
-                if (activeUserRef) { remove(activeUserRef); activeUserRef = null; }
-                document.getElementById('adminContainer').style.display  = 'none';
-                document.getElementById('loginContainer').style.display  = 'block';
-                document.getElementById('adminPassword').value           = '';
-            }
-        });
- 
-        // ── TAB SWITCHING ──────────────────────────────────────
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tabName = btn.dataset.tab;
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById(tabName + 'Tab').classList.add('active');
-            });
-        });
- 
-        // ── GLOBAL DATA ────────────────────────────────────────
-        let members  = [];
-        let bookings = [];
- 
-        // ── SYNC INDICATOR ─────────────────────────────────────
-        function updateSyncIndicator(online) {
-            const indicator     = document.getElementById('syncIndicator');
-            indicator.textContent = online ? '✅ Connected' : '❌ Offline';
-            indicator.className = `sync-indicator${online ? '' : ' offline'}`;
-        }
- 
-        // ── FIREBASE: MEMBERS ──────────────────────────────────
-        onValue(ref(database, 'members'), (snapshot) => {
-            const data = snapshot.val();
-            members = data
-                ? Object.keys(data).map(key => ({ id: key, name: data[key] }))
-                      .sort((a, b) => a.name.localeCompare(b.name))
-                : [];
+
+        // Members listener
+        onValue(ref(membersDb, 'members'), (snapshot) => {
+            allMembers = snapshot.val() || {};
             renderMembers();
             updateStats();
-            updateMemberFilter();
-            updateSyncIndicator(true);
-        }, () => updateSyncIndicator(false));
- 
-        // ── FIREBASE: BOOKINGS ─────────────────────────────────
-        onValue(ref(database, 'bookings'), (snapshot) => {
-            const data = snapshot.val();
-            bookings = data
-                ? Object.keys(data).map(key => ({
-                    ...data[key],
-                    id:   key,
-                    date: new Date((data[key].dateString || data[key].date) + 'T00:00:00')
-                })).sort((a, b) => b.date - a.date)
-                : [];
-            renderBookings();
-            renderNonMemberBookings();
-            updateStats();
-            updateSyncIndicator(true);
-        }, () => updateSyncIndicator(false));
- 
-        // ── STATS ──────────────────────────────────────────────
-        function updateStats() {
-            const now = new Date();
-            document.getElementById('totalMembers').textContent    = members.length;
-            document.getElementById('totalBookings').textContent   = bookings.length;
-            document.getElementById('memberBookings').textContent  = bookings.filter(b => b.bookerType === 'member').length;
-            document.getElementById('nonMemberBookings').textContent = bookings.filter(b => b.bookerType === 'nonmember').length;
-            document.getElementById('monthBookings').textContent   = bookings.filter(b =>
-                b.date.getMonth()    === now.getMonth() &&
-                b.date.getFullYear() === now.getFullYear()
-            ).length;
-            document.getElementById('todayBookings').textContent   = bookings.filter(b =>
-                b.date.toDateString() === now.toDateString()
-            ).length;
+        });
+
+        // Filter listeners
+        document.getElementById('filterType').addEventListener('change', renderBookings);
+        document.getElementById('filterEquipment').addEventListener('change', renderBookings);
+        document.getElementById('filterDate').addEventListener('change', renderBookings);
+        document.getElementById('filterName').addEventListener('input', renderBookings);
+    }
+
+    // ── STATS ───────────────────────────────────────────────────────────────
+    function updateStats() {
+        const bookingsArr = Object.values(allBookings);
+        document.getElementById('statTotal').textContent     = bookingsArr.length;
+        // index.html saves type as 'member' or 'nonmember'
+        document.getElementById('statMember').textContent    = bookingsArr.filter(b => b.type === 'member').length;
+        document.getElementById('statGuest').textContent     = bookingsArr.filter(b => b.type === 'nonmember').length;
+        document.getElementById('statMembers').textContent   = Object.keys(allMembers).length;
+    }
+
+    // ── RENDER BOOKINGS ─────────────────────────────────────────────────────
+    function renderBookings() {
+        const list         = document.getElementById('bookingList');
+        const filterType   = document.getElementById('filterType').value;
+        const filterEquip  = document.getElementById('filterEquipment').value;
+        const filterDate   = document.getElementById('filterDate').value;
+        const filterName   = document.getElementById('filterName').value.toLowerCase().trim();
+
+        // Convert to array and sort by date desc, then timestamp desc
+        let entries = Object.entries(allBookings).map(([id, b]) => ({ id, ...b }));
+
+        entries.sort((a, b) => {
+            if (b.date !== a.date) return b.date.localeCompare(a.date);
+            return (b.timestamp || 0) - (a.timestamp || 0);
+        });
+
+        // Apply filters
+        if (filterType)  entries = entries.filter(b => b.type === filterType);
+        if (filterEquip) entries = entries.filter(b => b.equipment === filterEquip);
+        if (filterDate)  entries = entries.filter(b => b.date === filterDate);
+        if (filterName)  entries = entries.filter(b => (b.name || '').toLowerCase().includes(filterName));
+
+        if (entries.length === 0) {
+            list.innerHTML = `<div class="empty-state">
+                <h3>📭 No bookings found</h3>
+                <p>No bookings match your current filters.</p>
+            </div>`;
+            return;
         }
- 
-        // ── RENDER MEMBERS ─────────────────────────────────────
-        function renderMembers() {
-            const memberList = document.getElementById('memberList');
-            if (members.length === 0) {
-                memberList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">👥</div>
-                        <div class="empty-state-text">No members yet. Add your first member!</div>
-                    </div>`;
-                return;
-            }
-            memberList.innerHTML = members.map(member => {
-                const memberBookingCount = bookings.filter(b =>
-                    b.memberName === member.name && b.bookerType === 'member'
-                ).length;
-                return `
-                    <div class="member-item">
-                        <div class="member-info">
-                            <div class="member-name">👤 ${member.name}</div>
-                            <div class="member-meta">ID: ${member.id} &nbsp;|&nbsp; 📅 ${memberBookingCount} booking(s)</div>
-                        </div>
-                        <button class="delete-btn" onclick="deleteMember('${member.id}', '${escapeAttr(member.name)}')">
-                            🗑️ Delete
-                        </button>
-                    </div>`;
-            }).join('');
-        }
- 
-        // ── RENDER ALL BOOKINGS ────────────────────────────────
-        function renderBookings() {
-            const bookingList = document.getElementById('bookingList');
-            let filtered      = [...bookings];
- 
-            const eqFilter   = document.getElementById('filterEquipment').value;
-            const dateFilter = document.getElementById('filterDate').value;
-            const nameFilter = document.getElementById('filterMember').value;
-            const typeFilter = document.getElementById('filterBookerType').value;
- 
-            if (eqFilter)   filtered = filtered.filter(b => b.equipment === eqFilter);
-            if (dateFilter) filtered = filtered.filter(b => b.dateString === dateFilter);
-            if (typeFilter) filtered = filtered.filter(b => b.bookerType === typeFilter);
-            if (nameFilter) filtered = filtered.filter(b => {
-                // Match against memberName for members, guestName for guests
-                if (b.bookerType === 'member')    return b.memberName === nameFilter;
-                if (b.bookerType === 'nonmember') return b.guestName  === nameFilter;
-                return false;
-            });
- 
-            if (filtered.length === 0) {
-                bookingList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📅</div>
-                        <div class="empty-state-text">No bookings found.</div>
-                    </div>`;
-                return;
-            }
-            bookingList.innerHTML = filtered.map(b => buildBookingCard(b)).join('');
-        }
- 
-        // ── RENDER GUEST BOOKINGS TAB ──────────────────────────
-        function renderNonMemberBookings() {
-            const list   = document.getElementById('nonMemberBookingList');
-            let filtered = bookings.filter(b => b.bookerType === 'nonmember');
- 
-            const dateFilter      = document.getElementById('nmFilterDate').value;
-            const eqFilter        = document.getElementById('nmFilterEquipment').value;
-            const slipFilter      = document.getElementById('nmFilterSlip').value;
-            const indemnityFilter = document.getElementById('nmFilterIndemnity').value;
- 
-            if (dateFilter)      filtered = filtered.filter(b => b.dateString === dateFilter);
-            if (eqFilter)        filtered = filtered.filter(b => b.equipment  === eqFilter);
-            if (slipFilter === 'uploaded') filtered = filtered.filter(b =>  b.paymentSlipURL);
-            if (slipFilter === 'missing')  filtered = filtered.filter(b => !b.paymentSlipURL);
-            if (indemnityFilter === 'agreed')   filtered = filtered.filter(b =>  b.indemnityAgreed);
-            if (indemnityFilter === 'missing')  filtered = filtered.filter(b => !b.indemnityAgreed);
- 
-            if (filtered.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🎫</div>
-                        <div class="empty-state-text">No guest bookings found.</div>
-                    </div>`;
-                return;
-            }
-            list.innerHTML = filtered.map(b => buildBookingCard(b)).join('');
-        }
- 
-        // ── BUILD BOOKING CARD ─────────────────────────────────
-        function buildBookingCard(booking) {
-            const dateObj       = new Date(booking.dateString + 'T00:00:00');
-            const formattedDate = dateObj.toLocaleDateString('en-US', {
-                weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
-            });
- 
-            const isMember  = booking.bookerType === 'member';
-            const cardClass = isMember ? 'booking-member' : 'booking-nonmember';
- 
-            // Display name: memberName for members, guestName for guests
-            const displayName = isMember
-                ? (booking.memberName || 'Unknown Member')
-                : (booking.guestName  || booking.memberName || 'Unknown Guest');
- 
-            const typeTag = isMember
-                ? `<span class="booking-type-tag tag-member">🏅 Member</span>`
-                : `<span class="booking-type-tag tag-nonmember">🎫 Guest</span>`;
- 
-            // Guest contact info
-            let guestContactHTML = '';
-            if (!isMember) {
-                const phone      = booking.guestPhone || 'Not provided';
-                const agreedAt   = booking.indemnityAgreedAt
-                    ? new Date(booking.indemnityAgreedAt).toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })
-                    : null;
-                const indemnityBadge = booking.indemnityAgreed
-                    ? `<span class="indemnity-badge indemnity-agreed">✅ Indemnity Agreed${agreedAt ? ' — ' + agreedAt : ''}</span>`
-                    : `<span class="indemnity-badge indemnity-missing">⚠️ Indemnity Not Recorded</span>`;
- 
-                guestContactHTML = `
-                    <div class="guest-contact-section">
-                        <strong>📞 Phone:</strong> ${phone}<br>
-                        ${indemnityBadge}
-                    </div>`;
-            }
- 
-            // Payment slip
-            let slipHTML = '';
-            if (!isMember) {
-                if (booking.paymentSlipURL) {
-                    const safeURL = booking.paymentSlipURL.replace(/'/g, '%27');
-                    slipHTML = `
-                        <div class="payment-slip-section">
-                            <h4>💳 Payment Slip</h4>                            <img src="${booking.paymentSlipURL}"
-                                 class="slip-thumbnail"
-                                 alt="Payment slip"
-                                 onclick="openLightbox('${safeURL}')">
-                            <div class="slip-actions">
-                                <button class="view-slip-btn" onclick="openLightbox('${safeURL}')">
-                                    🔍 View Full
-                                </button>
-                                <a href="${booking.paymentSlipURL}"
-                                   download="payment_slip_${booking.id}.jpg"
-                                   class="download-slip-btn"
-                                   target="_blank">
-                                    📥 Download
-                                </a>
-                            </div>
-                        </div>`;
-                } else {
-                    slipHTML = `
-                        <div class="payment-slip-section">
-                            <h4>💳 Payment Slip</h4>
-                            <span class="no-slip-badge">⚠️ No slip uploaded</span>
-                        </div>`;
-                }
-            }
- 
-            const createdAt = booking.createdAt
-                ? new Date(booking.createdAt).toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })
-                : 'Unknown';
- 
-            return `
-                <div class="booking-item ${cardClass}">
-                    <div class="booking-info">
-                        ${typeTag}
-                        <div class="member-name">👤 ${displayName}</div>
-                        <div class="booking-details">
-                            <div class="booking-detail"><strong>Equipment:</strong> ${booking.equipment}</div>
-                            <div class="booking-detail"><strong>Date:</strong> ${formattedDate}</div>
-                            <div class="booking-detail"><strong>Time:</strong> ${booking.timeSlot}</div>
-                            <div class="booking-detail"><strong>Booked At:</strong> ${createdAt}</div>
-                            <div class="booking-detail"><strong>Booking ID:</strong> ${booking.id.substring(0, 8)}...</div>
-                        </div>
-                        ${guestContactHTML}
-                        ${slipHTML}
-                    </div>
-                    <button class="delete-btn" onclick="deleteBooking('${booking.id}', '${escapeAttr(displayName)}', '${booking.equipment}')">
-                        🗑️ Delete
-                    </button>
+
+        list.innerHTML = entries.map(b => buildBookingCard(b)).join('');
+    }
+
+    // ── BUILD BOOKING CARD ──────────────────────────────────────────────────
+    // Matches exactly what index.html saves:
+    // { date, equipment, timeSlot, name, type, phone, paymentSlip, indemnity, timestamp }
+    function buildBookingCard(b) {
+        const isGuest     = b.type === 'nonmember';
+        const typeClass   = isGuest ? 'booking-nonmember' : 'booking-member';
+        const tagClass    = isGuest ? 'tag-nonmember' : 'tag-member';
+        const tagLabel    = isGuest ? '🎓 Guest' : '🏅 Member';
+        const displayName = b.name || 'Unknown';
+
+        const bookedAt = b.timestamp
+            ? new Date(b.timestamp).toLocaleString('en-SG')
+            : 'N/A';
+
+        // Guest contact section
+        let guestSection = '';
+        if (isGuest) {
+            const indemnityClass = b.indemnity ? 'indemnity-agreed' : 'indemnity-missing';
+            const indemnityText  = b.indemnity ? '✅ Indemnity Agreed' : '❌ Indemnity Missing';
+            guestSection = `
+                <div class="guest-contact-section">
+                    <strong>📞 Phone:</strong> ${b.phone || 'Not provided'}<br>
+                    <span class="indemnity-badge ${indemnityClass}">${indemnityText}</span>
                 </div>`;
         }
- 
-        // ── ESCAPE HELPER (prevents broken onclick attrs) ──────
-        function escapeAttr(str) {
-            return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+        // Payment slip section — index.html saves as 'paymentSlip' (base64)
+        let slipSection = '';
+        if (isGuest && b.paymentSlip) {
+            const slipSrc = b.paymentSlip; // base64 string from index.html
+            slipSection = `
+                <div class="payment-slip-section">
+                    <h4>💳 Payment Slip</h4>
+                    <img class="slip-thumbnail"
+                         src="${slipSrc}"
+                         alt="Payment Slip"
+                         onclick="openLightbox('${b.id}')">
+                    <div class="slip-actions">
+                        <button class="view-slip-btn"     onclick="openLightbox('${b.id}')">🔍 View Full</button>
+                        <a      class="download-slip-btn" href="${slipSrc}" download="payment_slip_${b.id}.jpg">⬇️ Download</a>
+                    </div>
+                </div>`;
         }
- 
-        // ── LIGHTBOX ───────────────────────────────────────────
-        window.openLightbox = function(url) {
-            document.getElementById('lightboxImg').src = url;
-            document.getElementById('lightbox').classList.add('active');
-        };
- 
-        document.getElementById('lightboxClose').addEventListener('click', () => {
+
+        return `
+        <div class="booking-item ${typeClass}" id="booking-${b.id}">
+            <div class="booking-info">
+                <span class="booking-type-tag ${tagClass}">${tagLabel}</span>
+                <div class="member-name">👤 ${displayName}</div>
+                <div class="booking-details">
+                    <div class="booking-detail"><strong>📅 Date:</strong> ${b.date || 'N/A'}</div>
+                    <div class="booking-detail"><strong>🚣 Equipment:</strong> ${b.equipment || 'N/A'}</div>
+                    <div class="booking-detail"><strong>🕐 Time:</strong> ${b.timeSlot || 'N/A'}</div>
+                    <div class="booking-detail"><strong>🕒 Booked At:</strong> ${bookedAt}</div>
+                </div>
+                ${guestSection}
+                ${slipSection}
+            </div>
+            <button class="delete-btn" onclick="deleteBooking('${b.id}')">🗑️ Delete</button>
+        </div>`;
+    }
+
+    // ── LIGHTBOX ────────────────────────────────────────────────────────────
+    // Store slip data by booking id for lightbox access
+    window.openLightbox = function(bookingId) {
+        const booking = allBookings[bookingId];
+        if (!booking || !booking.paymentSlip) return;
+        document.getElementById('lightboxImg').src = booking.paymentSlip;
+        document.getElementById('lightbox').classList.add('active');
+    };
+
+    document.getElementById('lightboxClose').addEventListener('click', () => {
+        document.getElementById('lightbox').classList.remove('active');
+    });
+
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('lightbox')) {
             document.getElementById('lightbox').classList.remove('active');
-        });
- 
-        document.getElementById('lightbox').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('lightbox')) {
-                document.getElementById('lightbox').classList.remove('active');
-            }
-        });
- 
-        // ── MEMBER FILTER DROPDOWN ─────────────────────────────
-        function updateMemberFilter() {
-            const filterMember = document.getElementById('filterMember');
-            const currentValue = filterMember.value;
-            filterMember.innerHTML = '<option value="">All Bookers</option>';
- 
-            // Add members
-            members.forEach(member => {
-                const option       = document.createElement('option');
-                option.value       = member.name;
-                option.textContent = '🏅 ' + member.name;
-                filterMember.appendChild(option);
-            });
- 
-            // Add unique guest names from bookings
-            const guestNames = [...new Set(
-                bookings
-                    .filter(b => b.bookerType === 'nonmember' && b.guestName)
-                    .map(b => b.guestName)
-            )].sort();
- 
-            guestNames.forEach(name => {
-                const option       = document.createElement('option');
-                option.value       = name;
-                option.textContent = '🎫 ' + name;
-                filterMember.appendChild(option);
-            });
- 
-            if (currentValue) filterMember.value = currentValue;
         }
- 
-        // ── ADD MEMBER ─────────────────────────────────────────
-        document.getElementById('addMemberBtn').addEventListener('click', () => {
-            document.getElementById('addMemberModal').style.display = 'block';
-            document.getElementById('memberName').focus();
+    });
+
+    // ── DELETE BOOKING ──────────────────────────────────────────────────────
+    window.deleteBooking = async function(id) {
+        if (!confirm('⚠️ Are you sure you want to delete this booking?')) return;
+        try {
+            await remove(ref(db, `bookings/${id}`));
+            alert('✅ Booking deleted.');
+        } catch (err) {
+            console.error('Delete error:', err);
+            alert('❌ Failed to delete booking.');
+        }
+    };
+
+    // ── RENDER MEMBERS ──────────────────────────────────────────────────────
+    function renderMembers() {
+        const list = document.getElementById('memberList');
+
+        const entries = Object.entries(allMembers);
+
+        if (entries.length === 0) {
+            list.innerHTML = `<div class="empty-state">
+                <h3>👥 No members yet</h3>
+                <p>Click "Add Member" to add your first member.</p>
+            </div>`;
+            return;
+        }
+
+        list.innerHTML = entries.map(([id, member]) => {
+            // Handle both string and object member formats
+            const name = typeof member === 'string' ? member : (member.name || 'Unknown');
+            return `
+            <div class="member-item" id="member-${id}">
+                <div class="member-info">
+                    <div class="member-name">👤 ${name}</div>
+                    <div class="member-meta">ID: ${id}</div>
+                </div>
+                <button class="delete-btn" onclick="deleteMember('${id}')">🗑️ Delete</button>
+            </div>`;
+        }).join('');
+    }
+
+    // ── ADD MEMBER ──────────────────────────────────────────────────────────
+    window.openAddMemberModal = function() {
+        document.getElementById('addMemberModal').style.display = 'block';
+        document.getElementById('newMemberName').value = '';
+        document.getElementById('newMemberName').focus();
+    };
+
+    window.closeAddMemberModal = function() {
+        document.getElementById('addMemberModal').style.display = 'none';
+    };
+
+    window.addMember = async function() {
+        const name = document.getElementById('newMemberName').value.trim();
+        if (!name) { alert('⚠️ Please enter a member name.'); return; }
+        try {
+            const newRef = push(ref(membersDb, 'members'));
+            await set(newRef, name);
+            closeAddMemberModal();
+            alert(`✅ Member "${name}" added!`);
+        } catch (err) {
+            console.error('Add member error:', err);
+            alert('❌ Failed to add member.');
+        }
+    };
+
+    document.getElementById('newMemberName').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') window.addMember();
+    });
+
+    // ── DELETE MEMBER ───────────────────────────────────────────────────────
+    window.deleteMember = async function(id) {
+        if (!confirm('⚠️ Are you sure you want to delete this member?')) return;
+        try {
+            await remove(ref(membersDb, `members/${id}`));
+            alert('✅ Member deleted.');
+        } catch (err) {
+            console.error('Delete member error:', err);
+            alert('❌ Failed to delete member.');
+        }
+    };
+
+    // ── TAB SWITCH ──────────────────────────────────────────────────────────
+    window.switchTab = function(tab) {
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', (i === 0 && tab === 'bookings') || (i === 1 && tab === 'members'));
         });
- 
-        document.getElementById('cancelAddMember').addEventListener('click', () => {
-            document.getElementById('addMemberModal').style.display = 'none';
-            document.getElementById('addMemberForm').reset();
-        });
- 
-        document.getElementById('closeAddMember').addEventListener('click', () => {
-            document.getElementById('addMemberModal').style.display = 'none';
-            document.getElementById('addMemberForm').reset();
-        });
- 
-        document.getElementById('addMemberForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const memberName = document.getElementById('memberName').value.trim();
-            if (!memberName) { alert('Please enter a member name!'); return; }
-            if (members.some(m => m.name.toLowerCase() === memberName.toLowerCase())) {
-                alert('❌ This member already exists!'); return;
-            }
-            try {
-                const newMemberRef = push(ref(database, 'members'));
-                await set(newMemberRef, memberName);
-                alert(`✅ Member "${memberName}" added successfully!`);
-                document.getElementById('addMemberModal').style.display = 'none';
-                document.getElementById('addMemberForm').reset();
-            } catch (error) {
-                console.error('Error adding member:', error);
-                alert('❌ Error adding member. Please try again.');
-            }
-        });
- 
-        // ── DELETE MEMBER ──────────────────────────────────────
-        window.deleteMember = async function(memberId, memberName) {
-            if (!confirm(`Delete "${memberName}"?\n\nThis will also delete all their bookings!`)) return;
-            try {
-                await remove(ref(database, `members/${memberId}`));
-                const memberBookings = bookings.filter(b =>
-                    b.memberName === memberName && b.bookerType === 'member'
-                );
-                for (const booking of memberBookings) {
-                    await remove(ref(database, `bookings/${booking.id}`));
-                }
-                alert(`✅ "${memberName}" and ${memberBookings.length} booking(s) deleted!`);
-            } catch (error) {
-                console.error('Error deleting member:', error);
-                alert('❌ Error deleting member. Please try again.');
-            }
-        };
- 
-        // ── DELETE BOOKING ─────────────────────────────────────
-        window.deleteBooking = async function(bookingId, displayName, equipment) {
-            if (!confirm(`Delete this booking?\n\n👤 ${displayName}\n🚣 ${equipment}`)) return;
-            try {
-                await remove(ref(database, `bookings/${bookingId}`));
-                alert('✅ Booking deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting booking:', error);
-                alert('❌ Error deleting booking. Please try again.');
-            }
-        };
- 
-        // ── EXPORT CSV ─────────────────────────────────────────
-        document.getElementById('exportCSVBtn').addEventListener('click', () => {
-            if (bookings.length === 0) { alert('No bookings to export.'); return; }
- 
-            const headers = [
-                'Booking ID', 'Type', 'Member Name', 'Guest Name', 'Guest Phone',
-                'Equipment', 'Date', 'Time Slot', 'Booked At',
-                'Payment Slip URL', 'Indemnity Agreed', 'Indemnity Agreed At'
-            ];
- 
-            const rows = bookings.map(b => [
-                b.id,
-                b.bookerType === 'member' ? 'Member' : 'Guest',
-                b.bookerType === 'member' ? (b.memberName || '') : '',
-                b.guestName  || '',
-                b.guestPhone || '',
-                b.equipment,
-                b.dateString,
-                b.timeSlot,
-                b.createdAt
-                    ? new Date(b.createdAt).toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })
-                    : '',
-                b.paymentSlipURL    || '',
-                b.indemnityAgreed   ? 'Yes' : 'No',
-                b.indemnityAgreedAt
-                    ? new Date(b.indemnityAgreedAt).toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })
-                    : ''
-            ]);
- 
-            const csvContent = [headers, ...rows]
-                .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-                .join('\n');
- 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url  = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href     = url;
-            link.download = `bookings_export_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-            URL.revokeObjectURL(url);
-        });
- 
-        // ── FILTER EVENT LISTENERS ─────────────────────────────
-        document.getElementById('filterEquipment').addEventListener('change',   renderBookings);
-        document.getElementById('filterDate').addEventListener('change',         renderBookings);
-        document.getElementById('filterMember').addEventListener('change',       renderBookings);
-        document.getElementById('filterBookerType').addEventListener('change',   renderBookings);
-        document.getElementById('nmFilterDate').addEventListener('change',       renderNonMemberBookings);
-        document.getElementById('nmFilterEquipment').addEventListener('change',  renderNonMemberBookings);
-        document.getElementById('nmFilterSlip').addEventListener('change',       renderNonMemberBookings);
-        document.getElementById('nmFilterIndemnity').addEventListener('change',  renderNonMemberBookings);
- 
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
-            }
-        });
- 
-    </script>
+        document.getElementById('tab-bookings').classList.toggle('active', tab === 'bookings');
+        document.getElementById('tab-members').classList.toggle('active',  tab === 'members');
+    };
+
+</script>
 </body>
 </html>
