@@ -592,7 +592,7 @@
                 ? Object.keys(data).map(key => ({
                     ...data[key],
                     id:   key,
-                    date: new Date(data[key].dateString + 'T00:00:00')
+                    date: new Date((data[key].dateString || data[key].date) + 'T00:00:00')
                 })).sort((a, b) => b.date - a.date)
                 : [];
             renderBookings();
