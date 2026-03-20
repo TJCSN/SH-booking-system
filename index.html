@@ -408,10 +408,10 @@
             font-size: 18px;
         }
 
-        .password-input-row { display: flex; gap: 10px; }
+        .password-input-row { display: flex; flex-direction: column; gap: 10px; }
 
         .password-input-row input {
-            flex: 1;
+            width: 100%;
             padding: 15px;
             border: 2px solid #BBDEFB;
             border-radius: 10px;
@@ -419,15 +419,21 @@
         }
 
         .password-input-row button {
-            padding: 15px 20px;
+            width: 100%;
+            padding: 15px;
             background: #1565C0;
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            white-space: nowrap;
+        }
+
+        @media (min-width: 480px) {
+            .password-input-row { flex-direction: row; }
+            .password-input-row input { flex: 1; width: auto; }
+            .password-input-row button { width: auto; white-space: nowrap; }
         }
 
         .member-section    { display: none; margin-bottom: 25px; }
@@ -1569,10 +1575,12 @@
                         time_slot: selectedTimeSlot,
                         type:      bookerType === 'member' ? 'Member' : 'Guest',
                         phone:     bookingData.phone || 'N/A',
-                        payment:   paymentSlipURL || 'N/A'
+                        payment_slip_image: paymentSlipURL || ''
                     });
+                    console.log('✅ Email sent!');
                 } catch (emailErr) {
-                    console.warn('Email notification failed:', emailErr);
+                    console.warn('❌ Email failed:', emailErr);
+                    console.warn('EmailJS error details:', JSON.stringify(emailErr));
                 }
 
                 closeModal();
